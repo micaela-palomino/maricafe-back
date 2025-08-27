@@ -1,24 +1,28 @@
 package com.uade.tpo.maricafe_back.entity;
 
+import jakarta.persistence.*;
+import lombok.*;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "productos")
 public class Producto {
-    private int idProducto;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer idProducto;
+
     private String titulo;
     private String descripcion;
     private double precio;
+
+    @ManyToOne
+    @JoinColumn(name = "categoria_id")
     private Categoria categoria;
-    private String metadata; //asumo que es info adicional que no es tan importante y se puede guardar aca asi que va como string
+
+    private String metadata;
     private int stock;
-
-    public void validarStock() {
-        // Tomi hizo esto. Hay que darle amor
-    }
-    public void crearProducto() {
-        // Tomi hizo esto. Hay que darle amor
-    }
-    public void modificarProducto() {
-        // Tomi hizo esto. Hay que darle amor
-
-    }    public void eliminarProducto() {
-        // Tomi hizo esto. Hay que darle amor
-    }
 }
