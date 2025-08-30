@@ -1,4 +1,17 @@
 package com.uade.tpo.maricafe_back.entity.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CategoriaDTO {
+
+    @JsonProperty("id_categoria")
+    private Integer idCategoria;
+
+    @JsonProperty("nombre")
+    private String nombre;
 }
