@@ -3,7 +3,9 @@ package com.uade.tpo.maricafe_back.exceptions;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "La categoria que se intenta agregar esta duplicada")
-public class CategoryDuplicateException extends Exception {
-
+@ResponseStatus(HttpStatus.CONFLICT)
+public class CategoryDuplicateException extends RuntimeException {
+    public CategoryDuplicateException(String nombre) {
+        super("Ya existe una categoría con nombre: " + nombre);
+    }
 }
