@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("products")
-public class ProductoController {
+public class ProductController {
     private final IProductoService productoService;
 
-    public ProductoController(IProductoService productoService) {
+    public ProductController(IProductoService productoService) {
         this.productoService = productoService;
     }
 }

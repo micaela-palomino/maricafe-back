@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoriaDTO {
+public class CategoryDTO {
 
     @JsonProperty("id_categoria")
     private Integer idCategoria;

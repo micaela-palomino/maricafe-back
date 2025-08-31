@@ -11,7 +11,8 @@ import lombok.*;
 @Table(name = "categorias", uniqueConstraints = {
         @UniqueConstraint(columnNames = "nombre")
 })
-public class Categoria {
+public class Category {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idCategoria;

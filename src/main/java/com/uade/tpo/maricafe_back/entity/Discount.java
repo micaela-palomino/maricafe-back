@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "descuentos")
-public class Descuento {
+public class Discount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,7 +17,7 @@ public class Descuento {
 
     @ManyToOne
     @JoinColumn(name = "producto_id")
-    private Producto producto;
+    private Product producto;
 
     private double porcentajeDescuento;
 }

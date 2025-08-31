@@ -1,6 +1,7 @@
 package com.uade.tpo.maricafe_back.controllers;
 
-import com.uade.tpo.maricafe_back.entity.dto.CategoriaDTO;
+import com.uade.tpo.maricafe_back.entity.Categoria;
+import com.uade.tpo.maricafe_back.entity.dto.CategoryDTO;
 import com.uade.tpo.maricafe_back.entity.dto.CreateCategoriaDTO;
 import com.uade.tpo.maricafe_back.exceptions.CategoryDuplicateException;
 import com.uade.tpo.maricafe_back.service.ICategoriaService;
@@ -14,15 +15,15 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("categories")
-public class CategoriaController {
+public class CategoryController {
     private final ICategoriaService categoriaService;
 
-    public CategoriaController(ICategoriaService categoriaService) {
+    public CategoryController(ICategoriaService categoriaService) {
         this.categoriaService = categoriaService;
     }
 
     @GetMapping
-    public ResponseEntity<Page<CategoriaDTO>> getCategories (
+    public ResponseEntity<Page<CategoryDTO>> getCategories (
             @RequestParam(required = false) Integer page,
             @RequestParam(required = false) Integer size) {
 
@@ -33,14 +34,14 @@ public class CategoriaController {
     }
 
     @GetMapping("/{catergoryId}")
-    public ResponseEntity<CategoriaDTO> getCategoryById(@PathVariable Integer catergoryId) {
-        Optional<CategoriaDTO> category = this.categoriaService.getCategoryById(catergoryId);
+    public ResponseEntity<CategoryDTO> getCategoryById(@PathVariable Integer catergoryId) {
+        Optional<CategoryDTO> category = this.categoriaService.getCategoryById(catergoryId);
         return category.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<CategoriaDTO> createCategoria(@RequestBody CreateCategoriaDTO dto) {
-        CategoriaDTO saved = categoriaService.createCategory(dto);
+    public ResponseEntity<CategoryDTO> createCategoria(@RequestBody CreateCategoriaDTO dto) {
+        CategoryDTO saved = categoriaService.createCategory(dto);
 
         return ResponseEntity
                 .created(URI.create("/categories/" + saved.getIdCategoria()))
@@ -54,11 +55,11 @@ public class CategoriaController {
     }
 
     @PutMapping("/{categoryId}")
-    public ResponseEntity<CategoriaDTO> updateCategory(
+    public ResponseEntity<CategoryDTO> updateCategory(
             @PathVariable Integer categoryId,
             @RequestBody CreateCategoriaDTO dto) {
 
-        CategoriaDTO updated = categoriaService.updateCategory(categoryId, dto);
+        CategoryDTO updated = categoriaService.updateCategory(categoryId, dto);
         return ResponseEntity.ok(updated); // 200 OK con la categoría actualizada
     }
 

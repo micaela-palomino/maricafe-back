@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("users")
-public class UsuarioController {
+public class UserController {
     private final IUsuarioService usuarioService;
 
-    public UsuarioController(IUsuarioService usuarioService) {
+    public UserController(IUsuarioService usuarioService) {
         this.usuarioService = usuarioService;
     }
 }

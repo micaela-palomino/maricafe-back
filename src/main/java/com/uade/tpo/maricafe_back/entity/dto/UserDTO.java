@@ -1,14 +1,14 @@
 package com.uade.tpo.maricafe_back.entity.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.uade.tpo.maricafe_back.entity.TipoRol;
+import com.uade.tpo.maricafe_back.entity.Role;
 import lombok.*;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsuarioDTO {
+public class UserDTO {
 
     @JsonProperty("id_usuario")
     private Integer idUsuario;
@@ -26,5 +26,5 @@ public class UsuarioDTO {
     private String mail;
 
     @JsonProperty("rol")
-    private TipoRol tipoRol;
+    private Role tipoRol;
 }

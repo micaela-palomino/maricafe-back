@@ -9,7 +9,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrdenDTO {
+public class OrderDTO {
 
     @JsonProperty("id_orden")
     private Integer idOrden;
@@ -21,5 +21,5 @@ public class OrdenDTO {
     private double precioTotal;
 
     @JsonProperty("productos")
-    private List<ProductoDTO> productos;
+    private List<ProductDTO> productos;
 }
