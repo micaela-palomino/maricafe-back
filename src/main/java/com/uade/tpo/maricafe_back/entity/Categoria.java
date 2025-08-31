@@ -8,12 +8,14 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "categorias")
+@Table(name = "categorias", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "nombre")
+})
 public class Categoria {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idCategoria;
 
+    @Column(unique = true, nullable = false)
     private String nombre;
 }
