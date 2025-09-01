@@ -8,16 +8,16 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "descuentos")
+@Table(name = "discounts")
 public class Discount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idDescuento;
+    private Integer discountId;
 
     @ManyToOne
     @JoinColumn(name = "producto_id")
-    private Product producto;
+    private Product product;
 
-    private double porcentajeDescuento;
+    private double discountPercentage;
 }

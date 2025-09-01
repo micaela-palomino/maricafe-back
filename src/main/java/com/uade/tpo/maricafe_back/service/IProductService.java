@@ -1,4 +1,4 @@
 package com.uade.tpo.maricafe_back.service;
 
-public interface IUsuarioService {
+public interface IProductService {
 }

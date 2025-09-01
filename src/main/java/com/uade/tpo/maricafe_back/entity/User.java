@@ -14,14 +14,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "usuarios")
+@Table(name = "users")
 public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idUsuario;
-
-    private String nombreUsuario;
+    private Integer userId;
+    private String username;
     private String firstName;
     private String lastName;
     private String password;

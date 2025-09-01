@@ -9,21 +9,21 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "ordenes")
+@Table(name = "orders")
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idOrden;
+    private Integer orderId;
 
-    private String fechaOrden;
-    private double precioTotal;
+    private String orderDate;
+    private double totalPrice;
 
     @ManyToMany
     @JoinTable(
-            name = "orden_productos",
-            joinColumns = @JoinColumn(name = "orden_id"),
-            inverseJoinColumns = @JoinColumn(name = "producto_id")
+            name = "product_order",
+            joinColumns = @JoinColumn(name = "orderId"),
+            inverseJoinColumns = @JoinColumn(name = "productId")
     )
-    private List<Product> productos;
+    private List<Product> products;
 }

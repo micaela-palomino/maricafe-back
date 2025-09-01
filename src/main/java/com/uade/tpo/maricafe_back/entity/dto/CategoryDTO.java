@@ -10,8 +10,8 @@ import lombok.*;
 public class CategoryDTO {
 
     @JsonProperty("id_categoria")
-    private Integer idCategoria;
+    private Integer categoryId;
 
-    @JsonProperty("nombre")
-    private String nombre;
+    @JsonProperty("name")
+    private String name;
 }

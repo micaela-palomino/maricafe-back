@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateCategoriaDTO {
-    @JsonProperty("nombre")
-    private String nombre;
+public class CreateCategoryDTO {
+    @JsonProperty("name")
+    private String name;
 }

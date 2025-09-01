@@ -1,10 +1,8 @@
 package com.uade.tpo.maricafe_back.controllers;
 
-import com.uade.tpo.maricafe_back.entity.Categoria;
 import com.uade.tpo.maricafe_back.entity.dto.CategoryDTO;
-import com.uade.tpo.maricafe_back.entity.dto.CreateCategoriaDTO;
-import com.uade.tpo.maricafe_back.exceptions.CategoryDuplicateException;
-import com.uade.tpo.maricafe_back.service.ICategoriaService;
+import com.uade.tpo.maricafe_back.entity.dto.CreateCategoryDTO;
+import com.uade.tpo.maricafe_back.service.ICategoryService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +14,9 @@ import java.util.Optional;
 @RestController
 @RequestMapping("categories")
 public class CategoryController {
-    private final ICategoriaService categoriaService;
+    private final ICategoryService categoriaService;
 
-    public CategoryController(ICategoriaService categoriaService) {
+    public CategoryController(ICategoryService categoriaService) {
         this.categoriaService = categoriaService;
     }
 
@@ -34,17 +32,17 @@ public class CategoryController {
     }
 
     @GetMapping("/{catergoryId}")
-    public ResponseEntity<CategoryDTO> getCategoryById(@PathVariable Integer catergoryId) {
-        Optional<CategoryDTO> category = this.categoriaService.getCategoryById(catergoryId);
+    public ResponseEntity<CategoryDTO> getCategoryById(@PathVariable Integer categoryId) {
+        Optional<CategoryDTO> category = this.categoriaService.getCategoryById(categoryId);
         return category.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<CategoryDTO> createCategoria(@RequestBody CreateCategoriaDTO dto) {
+    public ResponseEntity<CategoryDTO> createCategoria(@RequestBody CreateCategoryDTO dto) {
         CategoryDTO saved = categoriaService.createCategory(dto);
 
         return ResponseEntity
-                .created(URI.create("/categories/" + saved.getIdCategoria()))
+                .created(URI.create("/categories/" + saved.getCategoryId()))
                 .body(saved);
     }
 
@@ -57,7 +55,7 @@ public class CategoryController {
     @PutMapping("/{categoryId}")
     public ResponseEntity<CategoryDTO> updateCategory(
             @PathVariable Integer categoryId,
-            @RequestBody CreateCategoriaDTO dto) {
+            @RequestBody CreateCategoryDTO dto) {
 
         CategoryDTO updated = categoriaService.updateCategory(categoryId, dto);
         return ResponseEntity.ok(updated); // 200 OK con la categoría actualizada
