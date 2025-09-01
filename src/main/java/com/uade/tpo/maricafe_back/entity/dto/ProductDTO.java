@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductoDTO {
+public class ProductDTO {
 
     @JsonProperty("id_producto")
     private Integer idProducto;
@@ -22,7 +22,7 @@ public class ProductoDTO {
     private double precio;
 
     @JsonProperty("categoria")
-    private CategoriaDTO categoria;
+    private CategoryDTO categoria;
 
     @JsonProperty("metadata")
     private String metadata;

@@ -1,11 +1,12 @@
 package com.uade.tpo.maricafe_back.service;
 
-import com.uade.tpo.maricafe_back.entity.Categoria;
-import com.uade.tpo.maricafe_back.entity.dto.CategoriaDTO;
+
+import com.uade.tpo.maricafe_back.entity.Category;
+import com.uade.tpo.maricafe_back.entity.dto.CategoryDTO;
 import com.uade.tpo.maricafe_back.entity.dto.CreateCategoriaDTO;
 import com.uade.tpo.maricafe_back.exceptions.CategoryDuplicateException;
 import com.uade.tpo.maricafe_back.exceptions.ResourceNotFoundException;
-import com.uade.tpo.maricafe_back.repository.CategoriaRepository;
+import com.uade.tpo.maricafe_back.repository.CategoryRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,63 +17,65 @@ import java.util.Optional;
 
 @Service
 public class CategoriaServiceImpl implements ICategoriaService {
-    private final CategoriaRepository categoriaRepository;
+
+
+    private final CategoryRepository categoryRepository;
     private final ModelMapper modelMapper;
 
-    public CategoriaServiceImpl(CategoriaRepository categoriaRepository, ModelMapper modelMapper) {
-        this.categoriaRepository = categoriaRepository;
+    public CategoriaServiceImpl(CategoryRepository categoryRepository, ModelMapper modelMapper) {
+        this.categoryRepository = categoryRepository;
         this.modelMapper = modelMapper;
     }
 
     @Override
-    public Page<CategoriaDTO> getCategories(Pageable pageable) {
-        return categoriaRepository.findAll(pageable)
-                .map(categoria -> modelMapper.map(categoria, CategoriaDTO.class));
+    public Page<CategoryDTO> getCategories(Pageable pageable) {
+        return categoryRepository.findAll(pageable)
+                .map(category -> modelMapper.map(category, CategoryDTO.class));
     }
 
     @Override
-    public Optional<CategoriaDTO> getCategoryById(Integer id) {
-        return categoriaRepository.findById(id)
-                .map(categoria -> modelMapper.map(categoria, CategoriaDTO.class));
+    public Optional<CategoryDTO> getCategoryById(Integer id) {
+        return categoryRepository.findById(id)
+                .map(categoria -> modelMapper.map(categoria, CategoryDTO.class));
     }
 
     @Override
     @Transactional
-    public CategoriaDTO createCategory(CreateCategoriaDTO dto) {
-        boolean exists = categoriaRepository.existsByNombre(dto.getNombre());
+    public CategoryDTO createCategory(CreateCategoriaDTO dto) {
+        boolean exists = categoryRepository.existsByNombre(dto.getNombre());
         if (exists) {
             throw new CategoryDuplicateException(dto.getNombre());
         }
 
-        Categoria categoria = modelMapper.map(dto, Categoria.class);
-        Categoria created = categoriaRepository.save(categoria);
-        return modelMapper.map(created, CategoriaDTO.class);
+        Category categoria = modelMapper.map(dto, Category.class);
+        Category created = categoryRepository.save(categoria);
+        return modelMapper.map(created, CategoryDTO.class);
     }
 
     @Override
     @Transactional
     public void deleteCategoryById(Integer id) {
-        if (!categoriaRepository.existsById(id)) {
+        if (!categoryRepository.existsById(id)) {
             throw new ResourceNotFoundException("Categoría con id " + id + " no encontrada");
         }
-        categoriaRepository.deleteById(id);
+        categoryRepository.deleteById(id);
     }
 
     @Override
     @Transactional
-    public CategoriaDTO updateCategory(Integer id, CreateCategoriaDTO dto) {
-        Categoria categoria = categoriaRepository.findById(id)
+    public CategoryDTO updateCategory(Integer id, CreateCategoriaDTO dto) {
+        Category categoria = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Categoría con id " + id + " no encontrada"));
 
         // Verificar duplicados
-        boolean exists = categoriaRepository.existsByNombre(dto.getNombre());
+        boolean exists = categoryRepository.existsByNombre(dto.getNombre());
         if (exists && !categoria.getNombre().equals(dto.getNombre())) {
             throw new CategoryDuplicateException(dto.getNombre());
         }
 
         categoria.setNombre(dto.getNombre());
-        Categoria updated = categoriaRepository.save(categoria);
+        Category updated = categoryRepository.save(categoria);
 
-        return modelMapper.map(updated, CategoriaDTO.class);
+        return modelMapper.map(updated, CategoryDTO.class);
     }
 }

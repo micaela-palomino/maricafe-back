@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("orders")
-public class OrdenController {
+public class OrderController {
     private final IOrdenService ordenService;
 
-    public OrdenController(IOrdenService ordenService) {
+    public OrderController(IOrdenService ordenService) {
         this.ordenService = ordenService;
     }
 }
