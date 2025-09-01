@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.CONFLICT)
 public class CategoryDuplicateException extends RuntimeException {
-    public CategoryDuplicateException(String nombre) {
-        super("Ya existe una categoría con nombre: " + nombre);
+    public CategoryDuplicateException(String name) {
+        super("Ya existe una categoría con nombre: " + name);
     }
 }

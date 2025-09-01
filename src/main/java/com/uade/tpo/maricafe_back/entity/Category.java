@@ -8,15 +8,15 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "categorias", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "nombre")
+@Table(name = "categories", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "name")
 })
 public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idCategoria;
+    private Integer categoryId;
 
     @Column(unique = true, nullable = false)
-    private String nombre;
+    private String name;
 }
