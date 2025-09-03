@@ -1,7 +1,7 @@
 package com.uade.tpo.maricafe_back.controllers;
 
 import com.uade.tpo.maricafe_back.entity.Order; // usamos la entidad por ahora
-import com.uade.tpo.maricafe_back.services.IOrderService; // el nombre que vos usaste
+import com.uade.tpo.maricafe_back.service.IOrderService; // el nombre que vos usaste
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
