@@ -2,7 +2,6 @@ package com.uade.tpo.maricafe_back.service;
 
 import com.uade.tpo.maricafe_back.entity.Order;
 import com.uade.tpo.maricafe_back.repository.OrderRepository;
-import com.uade.tpo.maricafe_back.services.IOrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
