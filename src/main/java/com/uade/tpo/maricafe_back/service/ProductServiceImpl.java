@@ -23,15 +23,10 @@ public class ProductServiceImpl implements IProductService {
     private final ModelMapper modelMapper;
 
     public ProductServiceImpl(ProductRepository productRepository, DiscountRepository discountRepository, CategoryRepository categoryRepository, ModelMapper modelMapper) {
-        this.productRepository = productRepository;
-        this.discountRepository = discountRepository;
-        this.categoryRepository = categoryRepository;
-        this.modelMapper = modelMapper;
-        // TOMI: COMENTO LO QUE PONGO PORQUE SI NO ME OLVIDO:
-        // ProductRepository: consultas y operaciones sobre productos
-        //DiscountRepository: consultas y operaciones sobre descuentos
-        //CategoryRepository: para validar categorías existentes
-        //ModelMapper: (no sabia q existia) para convertir entidades (ej: Product) a dto (ProductDTO)
+        this.productRepository = productRepository; //consultas y operaciones sobre productos
+        this.discountRepository = discountRepository; //consultas y operaciones sobre descuentos
+        this.categoryRepository = categoryRepository; //para validar categorías existentes
+        this.modelMapper = modelMapper; //para convertir entidades (ej: Product) a dto (ProductDTO)
     }
 
     //esto me permite ordenar productos por precio asc/desc desde el endpoint. traduce un string (ej: price,asc) en un objeto sort
@@ -57,7 +52,43 @@ public class ProductServiceImpl implements IProductService {
         return dto;
     }
 
-    //3.8
+    //3.1 buscar productos con stock y filtros opcionales
+    @Override
+    public List<Product> findAvailableProducts(String q, Double priceMin, Double priceMax) {
+        if (priceMin != null && priceMax != null && priceMin > priceMax) {
+            throw new IllegalArgumentException("priceMin no puede ser mayor a priceMax");
+        }
+        if (q != null && !q.isBlank()) {
+            q = q.toLowerCase();
+        }
+        return productRepository.findAvailableProducts(q, priceMin, priceMax);
+    }
+
+    //3.2 buscar producto por id y que tenga stock
+    @Override
+    public Product findByIdAndAvailable(Integer id) {
+        return productRepository.findByIdAndStockGreaterThan(id, 0)
+                .orElseThrow(() -> new IllegalArgumentException("El producto: " + id + " no fue encontrado o no tiene stock"));
+    }
+
+    //3.3 buscar imagenes por id de producto
+    @Override
+    public List<String> findImagesByProductId(Integer id) {
+        //validar que el producto exista (opcional si queremos 404)
+        productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("El producto: " + id + " no fue encontrado"));
+        return productRepository.findImagesByProductId(id);
+    }
+
+    //3.4 buscar productos por categoría (con stock)
+    @Override
+    public List<Product> findByCategory (Integer categoryId) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("La categoria: " + categoryId + " no fue encontrada"));
+        return productRepository.findByCategoryAndStockGreaterThan(category, 0);
+    }
+
+    //3.8 listar productos (con stock) ordenados por precio (asc/desc)
     @Override
     public List<ProductDTO> listProductsSortedByPrice(String sortParam) {
         Sort sort = parseSortByPrice(sortParam);
@@ -66,7 +97,7 @@ public class ProductServiceImpl implements IProductService {
                 .stream().map(this::toDTO).toList();
     }
 
-    //3.5
+    //3.5 obtener productos por categoría (con stock) y ordenados por precio (asc/desc)
     @Override
     public List<ProductDTO> getProductsByCategory(Integer categoryId, String sortParam) {
         //validar categoría (opcional si queremos 404)
@@ -79,7 +110,7 @@ public class ProductServiceImpl implements IProductService {
                 .stream().map(this::toDTO).toList();
     }
 
-    //3.6
+    //3.6 crear o aplicar descuento a un producto
     @Override
     public DiscountDTO createDiscount(Integer productId, double percentage) {
         if (percentage < 0 || percentage > 100) {
@@ -97,7 +128,7 @@ public class ProductServiceImpl implements IProductService {
         return toDTO(discount);
     }
 
-    //3.7
+    //3.7 actualizar descuento existente
     @Override
     public DiscountDTO updateDiscount(Integer discountId, double percentage) {
         if (percentage < 0 || percentage > 100) {

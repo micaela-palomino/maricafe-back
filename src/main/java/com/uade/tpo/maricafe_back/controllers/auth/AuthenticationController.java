@@ -16,15 +16,19 @@ public class AuthenticationController {
 
     private final AuthenticationService service;
 
+    //Registro de usuario
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
             @RequestBody RegisterRequest request) {
         return ResponseEntity.ok(service.register(request));
+    //logica del registro
     }
 
+    //Login de usuario
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request) {
         return ResponseEntity.ok(service.authenticate(request));
+    //logica del login
     }
 }
