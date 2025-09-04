@@ -10,21 +10,24 @@ import lombok.*;
 @AllArgsConstructor
 public class UserDTO {
 
-    @JsonProperty("id_usuario")
-    private Integer idUsuario;
+    @JsonProperty("userId")
+    private Integer userId;
 
-    @JsonProperty("nombre_usuario")
-    private String nombreUsuario;
+    @JsonProperty("username")
+    private String username;
 
-    @JsonProperty("nombre")
-    private String nombre;
+    @JsonProperty("firstName")
+    private String firstName;
 
-    @JsonProperty("apellido")
-    private String apellido;
+    @JsonProperty("lastName")
+    private String lastName;
 
-    @JsonProperty("mail")
-    private String mail;
+    @JsonProperty("email")
+    private String email;
 
-    @JsonProperty("rol")
-    private Role tipoRol;
+    @JsonProperty("password")
+    private String password;
+
+    @JsonProperty("role")
+    private Role role;
 }
