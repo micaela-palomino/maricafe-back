@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "order")
+@Table(name = "orders")
 public class Order {
 
     @Id
@@ -28,4 +28,8 @@ public class Order {
             inverseJoinColumns = @JoinColumn(name = "productId")
     )
     private List<Product> products;
+
+    @ManyToOne
+    @JoinColumn(name = "userId")
+    private User user;
 }

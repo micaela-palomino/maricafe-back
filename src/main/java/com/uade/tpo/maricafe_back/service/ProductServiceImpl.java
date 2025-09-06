@@ -54,8 +54,16 @@ public class ProductServiceImpl implements IProductService {
     }
 
     //3.1 buscar productos con stock y filtros opcionales
+    // URI MIRA ACÁ
     @Override
     public List<Product> findAvailableProducts(String q, Double priceMin, Double priceMax) {
+
+        /*
+        * return categoryRepository.findAll()
+                .stream()
+                .map(cadaCategoriasd -> modelMapper.map(cadaCategoriasd, CategoryDTO.class)).toList();
+        * */
+
         if (priceMin != null && priceMax != null && priceMin > priceMax) {
             throw new IllegalArgumentException("priceMin no puede ser mayor a priceMax");
         }
