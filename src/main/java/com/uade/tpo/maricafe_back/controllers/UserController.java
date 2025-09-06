@@ -7,7 +7,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.Optional;
 
 @RestController
@@ -40,15 +39,6 @@ public class UserController {
     public ResponseEntity<UserDTO> getUserByEmail(@PathVariable String email) {
         Optional<UserDTO> user = this.userService.getUserByEmail(email);
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO dto) {
-        UserDTO saved = userService.createUser(dto);
-
-        return ResponseEntity
-                .created(URI.create("/users/" + saved.getUserId()))
-                .body(saved);
     }
 
     @DeleteMapping("/{userId}")

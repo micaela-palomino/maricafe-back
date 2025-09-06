@@ -12,8 +12,6 @@ public interface IUserService {
     
     Optional<UserDTO> getUserById(Integer id);
     
-    UserDTO createUser(UserDTO dto);
-    
     void deleteUserById(Integer id);
     
     UserDTO updateUser(Integer id, UserDTO dto);

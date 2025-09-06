@@ -39,26 +39,6 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     @Transactional
-    public UserDTO createUser(UserDTO dto) {
-        // Check if email already exists
-        if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("User with email already exists: " + dto.getEmail());
-        }
-
-        User user = User.builder()
-                .firstName(dto.getFirstName())
-                .lastName(dto.getLastName())
-                .email(dto.getEmail())
-                .password(passwordEncoder.encode(dto.getPassword()))
-                .role(dto.getRole())
-                .build();
-
-        User created = userRepository.save(user);
-        return modelMapper.map(created, UserDTO.class);
-    }
-
-    @Override
-    @Transactional
     public void deleteUserById(Integer id) {
         if (!userRepository.existsById(id)) {
             throw new ResourceNotFoundException("User with id " + id + " not found");
