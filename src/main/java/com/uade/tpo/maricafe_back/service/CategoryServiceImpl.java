@@ -42,7 +42,7 @@ public class CategoryServiceImpl implements ICategoryService {
     @Override
     @Transactional
     public CategoryDTO createCategory(CreateCategoryDTO dto) {
-        boolean exists = categoryRepository.existsByNombre(dto.getName());
+        boolean exists = categoryRepository.existsByName(dto.getName());
         if (exists) {
             throw new CategoryDuplicateException(dto.getName());
         }
@@ -68,7 +68,7 @@ public class CategoryServiceImpl implements ICategoryService {
                 .orElseThrow(() -> new ResourceNotFoundException("Categoría con id " + id + " no encontrada"));
 
         // Verificar duplicados
-        boolean exists = categoryRepository.existsByNombre(dto.getName());
+        boolean exists = categoryRepository.existsByName(dto.getName());
         if (exists && !category.getName().equals(dto.getName())) {
             throw new CategoryDuplicateException(dto.getName());
         }
