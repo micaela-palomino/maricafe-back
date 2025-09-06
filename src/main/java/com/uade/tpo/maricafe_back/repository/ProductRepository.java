@@ -21,7 +21,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     List<Product> findAvailableProducts(String q, Double priceMin, Double priceMax);
 
     // 2. Buscar producto por id y stock mayor a 0
-    Optional<Product> findByIdAndStockGreaterThan(Integer id, int stock);
+    Optional<Product> findByProductIdAndStockGreaterThan(Integer productId, int stockIsGreaterThan);
 
     // 3. Buscar imágenes por id de producto
     @Query("SELECT i.url FROM Image i WHERE i.product.productId = :id")

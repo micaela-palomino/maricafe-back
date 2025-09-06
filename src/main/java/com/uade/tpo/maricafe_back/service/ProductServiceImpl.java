@@ -67,7 +67,7 @@ public class ProductServiceImpl implements IProductService {
     //3.2 buscar producto por id y que tenga stock
     @Override
     public Product findByIdAndAvailable(Integer id) {
-        return productRepository.findByIdAndStockGreaterThan(id, 0)
+        return productRepository.findByProductIdAndStockGreaterThan(id, 0)
                 .orElseThrow(() -> new IllegalArgumentException("El producto: " + id + " no fue encontrado o no tiene stock"));
     }
 
