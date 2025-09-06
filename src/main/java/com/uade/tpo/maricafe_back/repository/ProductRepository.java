@@ -36,4 +36,5 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     // 6. Buscar productos con stock mayor a 0 y orden. Esto me devuelve una lista de productos que tenga mas stick que el valor pasado (ordenado)
     List<Product> findByStockGreaterThan(int stock, Sort sort);
 
+    boolean findByProductId(Integer productId);
 }

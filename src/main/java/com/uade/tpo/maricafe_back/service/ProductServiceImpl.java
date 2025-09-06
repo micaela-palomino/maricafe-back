@@ -5,6 +5,7 @@ import com.uade.tpo.maricafe_back.entity.Discount;
 import com.uade.tpo.maricafe_back.entity.Product;
 import com.uade.tpo.maricafe_back.entity.dto.DiscountDTO;
 import com.uade.tpo.maricafe_back.entity.dto.ProductDTO;
+import com.uade.tpo.maricafe_back.exceptions.ResourceNotFoundException;
 import com.uade.tpo.maricafe_back.repository.CategoryRepository;
 import com.uade.tpo.maricafe_back.repository.DiscountRepository;
 import com.uade.tpo.maricafe_back.repository.ProductRepository;
@@ -75,8 +76,9 @@ public class ProductServiceImpl implements IProductService {
     @Override
     public List<String> findImagesByProductId(Integer id) {
         //validar que el producto exista (opcional si queremos 404)
-        productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("El producto: " + id + " no fue encontrado"));
+        if (!productRepository.findByProductId(id)) {
+            throw new ResourceNotFoundException("Product with id " + id + " not found");
+        }
         return productRepository.findImagesByProductId(id);
     }
 
