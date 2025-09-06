@@ -1,6 +1,7 @@
 package com.uade.tpo.maricafe_back.service;
 
 import com.uade.tpo.maricafe_back.entity.Order;
+import com.uade.tpo.maricafe_back.exceptions.ResourceNotFoundException;
 import com.uade.tpo.maricafe_back.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,4 +32,14 @@ public class OrderServiceImpl implements IOrderService {
         return orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Orden no encontrada"));
     }
-}
+
+    @Override
+    public void deleteOrderById(Integer id) {
+        if(!orderRepository.existsById(id)){
+            throw new ResourceNotFoundException("No existe: " + id);
+        }
+        orderRepository.deleteById(id);
+
+    }
+    }
+
