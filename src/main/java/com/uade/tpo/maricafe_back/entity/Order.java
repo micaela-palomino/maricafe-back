@@ -2,6 +2,8 @@ package com.uade.tpo.maricafe_back.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -9,14 +11,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "orders")
+@Table(name = "order")
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer orderId;
 
-    private String orderDate;
+    private LocalDateTime orderDate;
     private double totalPrice;
 
     @ManyToMany
