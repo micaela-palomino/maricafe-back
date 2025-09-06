@@ -21,8 +21,8 @@ public class ProductController {
     }
 
     // 3.1 Listar productos (excluye sin stock)
-    @GetMapping
-    public List<Product> getAllProducts(
+    @GetMapping("/filterPrices")
+    public List<Product> getAllProductsFiltered(
             @RequestParam(required = false) String q,
             @RequestParam(required = false) Double priceMin,
             @RequestParam(required = false) Double priceMax
