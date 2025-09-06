@@ -47,6 +47,7 @@ public class UserController {
         return ResponseEntity.noContent().build(); // 204 No Content
     }
 
+    //Modificar el usuario para validar que solo el mismo usuario pueda modificar sus datos
     @PutMapping("/{userId}")
     public ResponseEntity<UserDTO> updateUser(
             @PathVariable Integer userId,
