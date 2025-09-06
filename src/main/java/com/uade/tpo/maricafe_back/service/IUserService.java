@@ -19,6 +19,4 @@ public interface IUserService {
     UserDTO updateUser(Integer id, UserDTO dto);
     
     Optional<UserDTO> getUserByEmail(String email);
-    
-    Optional<UserDTO> getUserByUsername(String username);
 }

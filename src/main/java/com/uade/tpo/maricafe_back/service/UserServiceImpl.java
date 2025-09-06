@@ -45,13 +45,7 @@ public class UserServiceImpl implements IUserService {
             throw new IllegalArgumentException("User with email already exists: " + dto.getEmail());
         }
 
-        // Check if username already exists
-        if (dto.getUsername() != null && userRepository.findByUsername(dto.getUsername()) != null) {
-            throw new IllegalArgumentException("User with username already exists: " + dto.getUsername());
-        }
-
         User user = User.builder()
-                .username(dto.getUsername())
                 .firstName(dto.getFirstName())
                 .lastName(dto.getLastName())
                 .email(dto.getEmail())
@@ -83,15 +77,7 @@ public class UserServiceImpl implements IUserService {
             throw new IllegalArgumentException("User with email already exists: " + dto.getEmail());
         }
 
-        // Check if username is being changed and if it already exists
-        if (dto.getUsername() != null && 
-            !dto.getUsername().equals(user.getUsername()) && 
-            userRepository.findByUsername(dto.getUsername()) != null) {
-            throw new IllegalArgumentException("User with username already exists: " + dto.getUsername());
-        }
-
         // Update user fields
-        user.setUsername(dto.getUsername());
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setEmail(dto.getEmail());
@@ -110,14 +96,5 @@ public class UserServiceImpl implements IUserService {
     public Optional<UserDTO> getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .map(user -> modelMapper.map(user, UserDTO.class));
-    }
-
-    @Override
-    public Optional<UserDTO> getUserByUsername(String username) {
-        User user = userRepository.findByUsername(username);
-        if (user != null) {
-            return Optional.of(modelMapper.map(user, UserDTO.class));
-        }
-        return Optional.empty();
     }
 }

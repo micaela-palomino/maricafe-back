@@ -17,7 +17,6 @@ public class ModelMapperConfig {
         // Configure User to UserDTO mapping
         mapper.createTypeMap(User.class, UserDTO.class)
                 .addMapping(User::getUserId, UserDTO::setUserId)
-                .addMapping(User::getUsername, UserDTO::setUsername)
                 .addMapping(User::getFirstName, UserDTO::setFirstName)
                 .addMapping(User::getLastName, UserDTO::setLastName)
                 .addMapping(User::getEmail, UserDTO::setEmail)

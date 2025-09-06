@@ -10,25 +10,23 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/maricafe/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
 
     private final AuthenticationService service;
 
-    //Registro de usuario
+    //Registro de usuario - retorna token
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(
+    public ResponseEntity<AuthenticationResponse> register (
             @RequestBody RegisterRequest request) {
         return ResponseEntity.ok(service.register(request));
-    //logica del registro
     }
 
-    //Login de usuario
-    @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(
+    //Login de usuario - retorna token
+    @PostMapping("/login")
+    public ResponseEntity<AuthenticationResponse> login (
             @RequestBody AuthenticationRequest request) {
         return ResponseEntity.ok(service.authenticate(request));
-    //logica del login
     }
 }

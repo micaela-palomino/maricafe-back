@@ -13,9 +13,6 @@ public class UserDTO {
     @JsonProperty("userId")
     private Integer userId;
 
-    @JsonProperty("username")
-    private String username;
-
     @JsonProperty("firstName")
     private String firstName;
 

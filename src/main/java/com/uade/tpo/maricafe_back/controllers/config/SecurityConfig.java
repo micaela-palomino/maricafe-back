@@ -25,10 +25,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(req -> req.requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/error/**").permitAll()
+        http.csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(req -> req.requestMatchers("/maricafe/auth/**").permitAll()
                         .requestMatchers("/categories/**").hasAnyAuthority(Role.USER.name())
                         .requestMatchers("/users/**").hasAnyAuthority(Role.ADMIN.name())
                         .requestMatchers("/products/**").hasAnyAuthority(Role.USER.name())
