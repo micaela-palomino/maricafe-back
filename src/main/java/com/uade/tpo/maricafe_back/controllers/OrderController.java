@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @RequiredArgsConstructor // si no usás Lombok, borralo y dejá tu constructor manual
 public class OrderController {
@@ -32,6 +33,14 @@ public class OrderController {
     // 4.3 [GET] "/orders/{id}" -> Obtener una orden propia por id
     @GetMapping("/orders/{id}")
     public Order getOne(@PathVariable Integer id) {
+
         return ordenService.findMyOrderById(id);
     }
+
+    @DeleteMapping("/order/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Integer id) {
+        ordenService.deleteOrderById(id);
+    }
+
 }
