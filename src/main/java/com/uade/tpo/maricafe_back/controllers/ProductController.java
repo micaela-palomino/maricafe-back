@@ -40,7 +40,7 @@ public class ProductController {
     }
 
     //3.4 Obtener productos por categoría
-    @GetMapping("/category/{categoryId}")
+    @GetMapping("/attributes")
     public List<Product> getProductsByAttributes(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) Double description,
