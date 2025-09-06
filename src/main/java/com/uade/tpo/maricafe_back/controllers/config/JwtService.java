@@ -12,6 +12,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
+import com.uade.tpo.maricafe_back.entity.User;
 
 @Service
 public class JwtService {
@@ -28,11 +29,14 @@ public class JwtService {
     private String buildToken(
             UserDetails userDetails,
             long expiration) {
+        User user = (User) userDetails;
         return Jwts
                 .builder()
-                .subject(userDetails.getUsername()) // prueba@hotmail.com
+                .subject(userDetails.getUsername())
+                .claim("userId", user.getUserId())
+                .claim("role", user.getRole().name())
+                .claim("email", user.getEmail())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .claim("Gisele", 1234567)
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSecretKey())
                 .compact();
@@ -49,6 +53,18 @@ public class JwtService {
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public Integer extractUserId(String token) {
+        return extractClaim(token, claims -> claims.get("userId", Integer.class));
+    }
+
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
+    }
+
+    public String extractEmail(String token) {
+        return extractClaim(token, claims -> claims.get("email", String.class));
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
