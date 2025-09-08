@@ -41,7 +41,7 @@ public class UserServiceImpl implements IUserService {
     @Transactional
     public void deleteUserById(Integer id) {
         if (!userRepository.existsById(id)) {
-            throw new ResourceNotFoundException("User with id " + id + " not found");
+            throw new ResourceNotFoundException("El usuario con el id: " + id + " no fue encontrado");
         }
         userRepository.deleteById(id);
     }
@@ -50,20 +50,20 @@ public class UserServiceImpl implements IUserService {
     @Transactional
     public UserDTO updateUser(Integer id, UserDTO dto) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("El usuario con el id: "  + id + " no fue encontrado"));
 
-        // Check if email is being changed and if it already exists
+        // Chequea si el email esta siendo modificado y si ya existe
         if (!user.getEmail().equals(dto.getEmail()) && userRepository.findByEmail(dto.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("User with email already exists: " + dto.getEmail());
+            throw new IllegalArgumentException("El usuario con el e-mail ya existe: " + dto.getEmail());
         }
 
-        // Update user fields
+        // Modofica los campos del usuario
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setEmail(dto.getEmail());
         user.setRole(dto.getRole());
 
-        // Only update password if provided
+        // Solo actualiza el password si es provisto
         if (dto.getPassword() != null && !dto.getPassword().trim().isEmpty()) {
             user.setPassword(passwordEncoder.encode(dto.getPassword()));
         }

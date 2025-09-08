@@ -56,7 +56,7 @@ public class CategoryServiceImpl implements ICategoryService {
     @Transactional
     public void deleteCategoryById(Integer id) {
         if (!categoryRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Categoría con id " + id + " no encontrada");
+            throw new ResourceNotFoundException("Categoría con id: " + id + " no encontrada");
         }
         categoryRepository.deleteById(id);
     }
@@ -65,7 +65,7 @@ public class CategoryServiceImpl implements ICategoryService {
     @Transactional
     public CategoryDTO updateCategory(Integer id, CreateCategoryDTO dto) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Categoría con id " + id + " no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Categoría con id: " + id + " no encontrada"));
 
         // Verificar duplicados
         boolean exists = categoryRepository.existsByName(dto.getName());

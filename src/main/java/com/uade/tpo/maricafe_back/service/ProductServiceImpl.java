@@ -77,7 +77,7 @@ public class ProductServiceImpl implements IProductService {
     @Override
     public Product findByIdAndAvailable(Integer id) {
         return productRepository.findByProductIdAndStockGreaterThan(id, 0)
-                .orElseThrow(() -> new IllegalArgumentException("El producto: " + id + " no fue encontrado o no tiene stock"));
+                .orElseThrow(() -> new IllegalArgumentException("El producto con id: " + id + " no fue encontrado o no tiene stock"));
     }
 
     //3.3 buscar imagenes por id de producto
@@ -85,7 +85,7 @@ public class ProductServiceImpl implements IProductService {
     public List<String> findImagesByProductId(Integer id) {
         //validar que el producto exista (opcional si queremos 404)
         if (!productRepository.findByProductId(id)) {
-            throw new ResourceNotFoundException("Product with id " + id + " not found");
+            throw new ResourceNotFoundException("El producto con id: " + id + " no fue encontrado");
         }
         return productRepository.findImagesByProductId(id);
     }
