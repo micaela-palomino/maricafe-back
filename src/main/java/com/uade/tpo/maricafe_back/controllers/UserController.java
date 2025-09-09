@@ -2,11 +2,10 @@ package com.uade.tpo.maricafe_back.controllers;
 
 import com.uade.tpo.maricafe_back.entity.dto.UserDTO;
 import com.uade.tpo.maricafe_back.service.IUserService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -19,14 +18,8 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<UserDTO>> getUsers(
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size) {
-
-        if (page == null || size == null) {
-            return ResponseEntity.ok(userService.getUsers(PageRequest.of(0, Integer.MAX_VALUE)));
-        }
-        return ResponseEntity.ok(userService.getUsers(PageRequest.of(page, size)));
+    public ResponseEntity<List<UserDTO>> getUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("/{userId}")
