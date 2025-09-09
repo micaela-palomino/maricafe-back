@@ -39,14 +39,14 @@ public class ProductController {
         return productService.findImagesByProductId(id);
     }
 
-    //3.4 Obtener productos por categoría
+    //3.4 Obtener productos por cualquiera de sus atributos (title, description, priceMax), teniendo en cuents que tal vez solo pasa uno de sus atributos
     @GetMapping("/attributes")
-    public List<Product> getProductsByAttributes(
+    public List<ProductDTO> getProductsByAttributes(
             @RequestParam(required = false) String title,
-            @RequestParam(required = false) Double description,
+            @RequestParam(required = false) String description,
             @RequestParam(required = false) Double priceMax
     ) {
-        return productService.findByCategory(1);
+        return productService.findProductsByAttributes(title, description, priceMax);
     }
 
     //EP1 TOMI: 3.5 GET /categories/{id}/products?sort=price,asc|desc

@@ -1,6 +1,5 @@
 package com.uade.tpo.maricafe_back.service;
 
-import com.uade.tpo.maricafe_back.entity.Category;
 import com.uade.tpo.maricafe_back.entity.Discount;
 import com.uade.tpo.maricafe_back.entity.Product;
 import com.uade.tpo.maricafe_back.entity.dto.DiscountDTO;
@@ -92,10 +91,11 @@ public class ProductServiceImpl implements IProductService {
 
     //3.4 buscar productos por categoría (con stock)
     @Override
-    public List<Product> findByCategory (Integer categoryId) {
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new IllegalArgumentException("La categoria: " + categoryId + " no fue encontrada"));
-        return productRepository.findByCategoryAndStockGreaterThan(category, 0);
+    public List<ProductDTO> findProductsByAttributes(String title, String description, Double priceMax) {
+        return productRepository.findByAttributes(title, description, priceMax)
+                .stream()
+                .map(product -> modelMapper.map(product, ProductDTO.class))
+                .toList();
     }
 
     //3.8 listar productos (con stock) ordenados por precio (asc/desc)

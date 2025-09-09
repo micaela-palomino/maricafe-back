@@ -1,10 +1,11 @@
 package com.uade.tpo.maricafe_back.repository;
 
-import com.uade.tpo.maricafe_back.entity.Category;
+
 import com.uade.tpo.maricafe_back.entity.Product;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     // 1. Buscar productos disponibles con filtros opcionales
     @Query("SELECT p FROM Product p WHERE p.stock > 0 "
-            + "AND (:q IS NULL OR LOWER(p.tittle) LIKE %:q%) "
+            + "AND (:q IS NULL OR LOWER(p.title) LIKE %:q%) "
             + "AND (:priceMin IS NULL OR p.price >= :priceMin) "
             + "AND (:priceMax IS NULL OR p.price <= :priceMax)")
     List<Product> findAvailableProducts(String q, Double priceMin, Double priceMax);
@@ -27,8 +28,14 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("SELECT i.url FROM Image i WHERE i.product.productId = :id")
     List<String> findImagesByProductId(Integer id);
 
-    // 4. Buscar productos por categoría y stock mayor a 0
-    List<Product> findByCategoryAndStockGreaterThan(Category category, int stock);
+    // 4. Buscar productos por atributos (title, description, priceMax)
+    @Query("SELECT p FROM Product p WHERE " +
+            "(:title IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :title, '%'))) AND " +
+            "(:description IS NULL OR LOWER(p.description) LIKE LOWER(CONCAT('%', :description, '%'))) AND " +
+            "(:priceMax IS NULL OR p.price <= :priceMax)")
+    List<Product> findByAttributes(@Param("title") String title,
+                                   @Param("description") String description,
+                                   @Param("priceMax") Double priceMax);
 
     // 5. Buscar productos por categoryId y stock mayor a 0 (para DTO). Tambien los ordena
     List<Product> findByCategory_CategoryIdAndStockGreaterThan(Integer categoryId, int stock, Sort sort);

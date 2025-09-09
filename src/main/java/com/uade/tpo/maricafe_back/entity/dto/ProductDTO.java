@@ -10,19 +10,19 @@ import lombok.*;
 public class ProductDTO {
 
     @JsonProperty("id_producto")
-    private Integer idProducto;
+    private Integer idProduct;
 
     @JsonProperty("titulo")
-    private String titulo;
+    private String title;
 
     @JsonProperty("descripcion")
-    private String descripcion;
+    private String description;
 
     @JsonProperty("precio")
-    private double precio;
+    private double price;
 
     @JsonProperty("categoria")
-    private CategoryDTO categoria;
+    private CategoryDTO category;
 
     @JsonProperty("metadata")
     private String metadata;

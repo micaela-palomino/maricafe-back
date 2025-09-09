@@ -18,7 +18,7 @@ public interface IProductService {
     List<String> findImagesByProductId(Integer id);
 
     // 3.4 obtener productos por categoría (con stock)
-    List<Product> findByCategory(Integer categoryId);
+    List<ProductDTO> findProductsByAttributes(String title, String description, Double priceMax);
 
     // 3.5 productos por categoría (con stock)
     List<ProductDTO> getProductsByCategory(Integer categoryId, String sortParam);
