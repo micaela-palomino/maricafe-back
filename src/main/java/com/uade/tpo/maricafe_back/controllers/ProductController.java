@@ -1,11 +1,14 @@
 package com.uade.tpo.maricafe_back.controllers;
 
 import com.uade.tpo.maricafe_back.entity.Product;
+import com.uade.tpo.maricafe_back.entity.dto.CreateProductDTO;
 import com.uade.tpo.maricafe_back.entity.dto.ProductDTO;
 import com.uade.tpo.maricafe_back.service.IProductService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -31,6 +34,13 @@ public class ProductController {
     @GetMapping("/{id}")
     public Product getProductById(@PathVariable Integer id) {
         return productService.findByIdAndAvailable(id);
+    }
+
+    // 3.2 Obtener producto por id para admins
+    @GetMapping("/admin/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ProductDTO getProductByIdAdmin(@PathVariable Integer id) {
+        return productService.findById(id);
     }
 
     // 3.3 Obtener imágenes del producto por id
@@ -61,6 +71,33 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<List<ProductDTO>> listProducts(@RequestParam(required = false) String sort) {
         return ResponseEntity.ok(productService.listProductsSortedByPrice(sort));
+    }
+
+    // 4.1 POST /products - Crear producto (solo ADMIN)
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<ProductDTO> createProduct(@RequestBody CreateProductDTO dto) {
+        ProductDTO saved = productService.createProduct(dto);
+        return ResponseEntity
+                .created(URI.create("/products/" + saved.getIdProduct()))
+                .body(saved);
+    }
+
+    // 4.2 PUT /products/{id} - Actualizar producto (solo ADMIN)
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductDTO> updateProduct(
+            @PathVariable Integer id,
+            @RequestBody CreateProductDTO dto) {
+        ProductDTO updated = productService.updateProduct(id, dto);
+        return ResponseEntity.ok(updated);
+    }
+
+    // 4.3 DELETE /products/{id} - Eliminar producto (solo ADMIN)
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<Void> deleteProduct(@PathVariable Integer id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

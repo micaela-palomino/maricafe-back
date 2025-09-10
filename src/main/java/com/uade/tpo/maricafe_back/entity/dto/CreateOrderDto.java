@@ -10,12 +10,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateOrderDto {
-    @JsonProperty("fecha_orden")
-    private String fechaOrden;
-
-    @JsonProperty("precio_total")
-    private double precioTotal;
-
     @JsonProperty("productos")
     private List<ProductDTO> productos;
 }

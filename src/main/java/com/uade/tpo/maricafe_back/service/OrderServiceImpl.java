@@ -1,14 +1,17 @@
 package com.uade.tpo.maricafe_back.service;
 
 import com.uade.tpo.maricafe_back.entity.Order;
+import com.uade.tpo.maricafe_back.entity.Product;
 import com.uade.tpo.maricafe_back.entity.dto.CreateOrderDto;
 import com.uade.tpo.maricafe_back.entity.dto.OrderDTO;
+import com.uade.tpo.maricafe_back.entity.dto.ProductDTO;
 import com.uade.tpo.maricafe_back.exceptions.ResourceNotFoundException;
 import com.uade.tpo.maricafe_back.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -20,10 +23,29 @@ public class OrderServiceImpl implements IOrderService {
 
     @Override
     public OrderDTO create(CreateOrderDto orderDto) {
-        // Por ahora, guarda lo que venga. Luego calculamos total y usuario.
-        Order order = modelMapper.map(orderDto, Order.class); // Convertir dto (sin id) hacia entidad para la bd
-        Order created = orderRepository.save(order); // Guardas la orden en la db y guardas la entidad creada en una variable
-        return modelMapper.map(created, OrderDTO.class); // Retornas el que guardaste PERO lo mapeas a dto (con id)
+        // Validar que hay productos en la orden
+        if (orderDto.getProductos() == null || orderDto.getProductos().isEmpty()) {
+            throw new IllegalArgumentException("La orden debe contener al menos un producto");
+        }
+
+        List<Product> products = orderDto.getProductos().stream()
+            .map(productDTO -> modelMapper.map(productDTO, Product.class)).toList();
+
+        // Calcular el total automáticamente usando streams
+        double totalPrice = products.stream()
+                .mapToDouble(Product::getPrice)
+                .sum();
+
+        // Crear la orden
+        Order order = Order.builder()
+                .orderDate(LocalDateTime.now())
+                .totalPrice(totalPrice)
+                .products(products)
+                .user(null) // TODO: Obtener usuario autenticado
+                .build();
+
+        Order created = orderRepository.save(order);
+        return modelMapper.map(created, OrderDTO.class);
     }
 
     @Override
@@ -41,8 +63,7 @@ public class OrderServiceImpl implements IOrderService {
         // TEMP: busca por id sin validar dueño. Luego agregamos seguridad.
         return orderRepository.findById(id)
                 .map(order -> modelMapper.map(order, OrderDTO.class))
-                .orElseThrow(()->new RuntimeException("Order not Found"));
-
+                .orElseThrow(()-> new ResourceNotFoundException("Order not Found"));
     }
 
     @Override
@@ -51,7 +72,5 @@ public class OrderServiceImpl implements IOrderService {
             throw new ResourceNotFoundException("Doesn't exist: " + id);
         }
         orderRepository.deleteById(id);
-
     }
-    }
-
+}

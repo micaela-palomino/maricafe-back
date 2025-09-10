@@ -28,9 +28,9 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("SELECT i.url FROM Image i WHERE i.product.productId = :id")
     List<String> findImagesByProductId(Integer id);
 
-    // 4. Buscar productos por atributos (title, description, priceMax)
-    @Query("SELECT p FROM Product p WHERE " +
-            "(:title IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :title, '%'))) AND " +
+    // 4. Buscar productos por atributos (title, description, priceMax) - solo con stock
+    @Query("SELECT p FROM Product p WHERE p.stock > 0 " +
+            "AND (:title IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :title, '%'))) AND " +
             "(:description IS NULL OR LOWER(p.description) LIKE LOWER(CONCAT('%', :description, '%'))) AND " +
             "(:priceMax IS NULL OR p.price <= :priceMax)")
     List<Product> findByAttributes(@Param("title") String title,

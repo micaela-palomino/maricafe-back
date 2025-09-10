@@ -1,7 +1,10 @@
 package com.uade.tpo.maricafe_back.service;
 
+import com.uade.tpo.maricafe_back.entity.Category;
 import com.uade.tpo.maricafe_back.entity.Discount;
 import com.uade.tpo.maricafe_back.entity.Product;
+import com.uade.tpo.maricafe_back.entity.dto.CategoryDTO;
+import com.uade.tpo.maricafe_back.entity.dto.CreateProductDTO;
 import com.uade.tpo.maricafe_back.entity.dto.DiscountDTO;
 import com.uade.tpo.maricafe_back.entity.dto.ProductDTO;
 import com.uade.tpo.maricafe_back.exceptions.ResourceNotFoundException;
@@ -13,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements IProductService {
@@ -44,6 +48,7 @@ public class ProductServiceImpl implements IProductService {
     private ProductDTO toDTO(Product p) {
         return modelMapper.map(p, ProductDTO.class);
     }
+
     private DiscountDTO toDTO(Discount d) {
         DiscountDTO dto = new DiscountDTO();
         dto.setDiscountId(d.getDiscountId());
@@ -79,13 +84,22 @@ public class ProductServiceImpl implements IProductService {
                 .orElseThrow(() -> new IllegalArgumentException("El producto con id: " + id + " no fue encontrado o no tiene stock"));
     }
 
+    @Override
+    public ProductDTO findById(Integer id) {
+        Optional<Product> product = productRepository.findById(id);
+        if (product.isEmpty()) {
+            throw new ResourceNotFoundException("No se encuentra producto con id: " + id);
+        }
+        return modelMapper.map(product, ProductDTO.class);
+    }
+
     //3.3 buscar imagenes por id de producto
     @Override
     public List<String> findImagesByProductId(Integer id) {
-        //validar que el producto exista (opcional si queremos 404)
-        if (!productRepository.findByProductId(id)) {
-            throw new ResourceNotFoundException("El producto con id: " + id + " no fue encontrado");
-        }
+        // Validar que el producto exista Y tenga stock
+        Product product = productRepository.findByProductIdAndStockGreaterThan(id, 0)
+                .orElseThrow(() -> new ResourceNotFoundException("El producto con id: " + id + " no fue encontrado o no tiene stock"));
+        
         return productRepository.findImagesByProductId(id);
     }
 
@@ -150,5 +164,92 @@ public class ProductServiceImpl implements IProductService {
         discount.setDiscountPercentage(percentage);
         discount = discountRepository.save(discount);
         return toDTO(discount);
+    }
+
+    // 4.1 crear producto (solo ADMIN)
+    @Override
+    public ProductDTO createProduct(CreateProductDTO dto) {
+        // Validar que la categoría existe
+        Category category = categoryRepository.findById(dto.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("La categoría con id: " + dto.getCategoryId() + " no fue encontrada"));
+
+        // Validar datos del producto
+        if (dto.getPrice() < 0) {
+            throw new IllegalArgumentException("El precio no puede ser negativo");
+        }
+        if (dto.getStock() < 0) {
+            throw new IllegalArgumentException("El stock no puede ser negativo");
+        }
+        if (dto.getTitle() == null || dto.getTitle().trim().isEmpty()) {
+            throw new IllegalArgumentException("El título es obligatorio");
+        }
+
+        // Crear producto
+        Product product = Product.builder()
+                .title(dto.getTitle())
+                .description(dto.getDescription())
+                .price(dto.getPrice())
+                .category(category)
+                .metadata(dto.getMetadata())
+                .stock(dto.getStock())
+                .build();
+
+        product = productRepository.save(product);
+        return toDTO(product);
+    }
+
+    // 4.2 actualizar producto (solo ADMIN)
+    @Override
+    public ProductDTO updateProduct(Integer productId, CreateProductDTO dto) {
+        // Validar que el producto existe
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("El producto con id: " + productId + " no fue encontrado"));
+
+        // Validar que la categoría existe (si se proporciona)
+        if (dto.getCategoryId() != null) {
+            Category category = categoryRepository.findById(dto.getCategoryId())
+                    .orElseThrow(() -> new IllegalArgumentException("La categoría con id: " + dto.getCategoryId() + " no fue encontrada"));
+            product.setCategory(category);
+        }
+
+        // Validar datos del producto
+        if (dto.getPrice() < 0) {
+            throw new IllegalArgumentException("El precio no puede ser negativo");
+        }
+        if (dto.getStock() < 0) {
+            throw new IllegalArgumentException("El stock no puede ser negativo");
+        }
+        if (dto.getTitle() != null && dto.getTitle().trim().isEmpty()) {
+            throw new IllegalArgumentException("El título no puede estar vacío");
+        }
+
+        // Actualizar campos (solo si se proporcionan)
+        if (dto.getTitle() != null) {
+            product.setTitle(dto.getTitle());
+        }
+        if (dto.getDescription() != null) {
+            product.setDescription(dto.getDescription());
+        }
+        if (dto.getPrice() >= 0) {
+            product.setPrice(dto.getPrice());
+        }
+        if (dto.getMetadata() != null) {
+            product.setMetadata(dto.getMetadata());
+        }
+        if (dto.getStock() >= 0) {
+            product.setStock(dto.getStock());
+        }
+
+        product = productRepository.save(product);
+        return toDTO(product);
+    }
+
+    // 4.3 eliminar producto (solo ADMIN)
+    @Override
+    public void deleteProduct(Integer productId) {
+        if (!productRepository.existsById(productId)) {
+            throw new ResourceNotFoundException("El producto con id: " + productId + " no fue encontrado");
+        }
+        productRepository.deleteById(productId);
     }
 }
