@@ -97,7 +97,7 @@ public class ProductServiceImpl implements IProductService {
     @Override
     public List<String> findImagesByProductId(Integer id) {
         // Validar que el producto exista Y tenga stock
-        Product product = productRepository.findByProductIdAndStockGreaterThan(id, 0)
+        productRepository.findByProductIdAndStockGreaterThan(id, 0)
                 .orElseThrow(() -> new ResourceNotFoundException("El producto con id: " + id + " no fue encontrado o no tiene stock"));
         
         return productRepository.findImagesByProductId(id);
