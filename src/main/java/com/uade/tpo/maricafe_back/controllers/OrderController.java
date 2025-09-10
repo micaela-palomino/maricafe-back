@@ -29,13 +29,13 @@ public class OrderController {
 
     // 4.2 [GET] "/user/orders" -> Listar órdenes del usuario autenticado
     @GetMapping("/user")
-    public List<Order> myOrders() {
+    public List<OrderDTO> myOrders() {
         return ordenService.findMine();
     }
 
     // 4.3 [GET] "/orders/{id}" -> Obtener una orden propia por id
     @GetMapping("/{id}")
-    public Order getOne(@PathVariable Integer id) {
+    public OrderDTO getOne(@PathVariable Integer id) {
 
         return ordenService.findMyOrderById(id);
     }

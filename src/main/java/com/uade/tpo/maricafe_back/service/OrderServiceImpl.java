@@ -27,22 +27,28 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public List<Order> findMine() {
+    public List<OrderDTO> findMine() {
         // TEMP: devuelve todas. Después filtramos por usuario autenticado.
-        return orderRepository.findAll();
+
+        return orderRepository.findAll()
+                .stream()
+                .map(order ->modelMapper.map(order, OrderDTO.class))
+                .toList();
     }
 
     @Override
-    public Order findMyOrderById(Integer id) {
+    public OrderDTO findMyOrderById(Integer id) {
         // TEMP: busca por id sin validar dueño. Luego agregamos seguridad.
         return orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Orden no encontrada"));
+                .map(order -> modelMapper.map(order, OrderDTO.class))
+                .orElseThrow(()->new RuntimeException("Order not Found"));
+
     }
 
     @Override
     public void deleteOrderById(Integer id) {
         if(!orderRepository.existsById(id)){
-            throw new ResourceNotFoundException("No existe: " + id);
+            throw new ResourceNotFoundException("Doesn't exist: " + id);
         }
         orderRepository.deleteById(id);
 
