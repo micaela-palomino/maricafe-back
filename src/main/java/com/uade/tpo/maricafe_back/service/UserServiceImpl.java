@@ -11,7 +11,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements IUserService {
@@ -29,6 +31,14 @@ public class UserServiceImpl implements IUserService {
     public Page<UserDTO> getUsers(Pageable pageable) {
         return userRepository.findAll(pageable)
                 .map(user -> modelMapper.map(user, UserDTO.class));
+    }
+
+    @Override
+    public List<UserDTO> getAllUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(user -> modelMapper.map(user, UserDTO.class))
+                .collect(Collectors.toList());
     }
 
     @Override

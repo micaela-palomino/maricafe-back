@@ -1,14 +1,16 @@
 package com.uade.tpo.maricafe_back.service;
 
 import com.uade.tpo.maricafe_back.entity.dto.UserDTO;
-import com.uade.tpo.maricafe_back.entity.dto.UserDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface IUserService {
     Page<UserDTO> getUsers(Pageable pageable);
+    
+    List<UserDTO> getAllUsers();
     
     Optional<UserDTO> getUserById(Integer id);
     
