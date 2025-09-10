@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.Optional;
+
 
 @RestController
 @RequestMapping("categories")
@@ -31,11 +31,6 @@ public class CategoryController {
         return ResponseEntity.ok(categoriaService.getCategories(PageRequest.of(page, size)));
     }
 
-    @GetMapping("/{catergoryId}")
-    public ResponseEntity<CategoryDTO> getCategoryById(@PathVariable Integer categoryId) {
-        Optional<CategoryDTO> category = this.categoriaService.getCategoryById(categoryId);
-        return category.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
 
     @PostMapping
     public ResponseEntity<CategoryDTO> createCategoria(@RequestBody CreateCategoryDTO dto) {
