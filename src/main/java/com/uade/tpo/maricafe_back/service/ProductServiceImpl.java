@@ -1,15 +1,11 @@
 package com.uade.tpo.maricafe_back.service;
 
 import com.uade.tpo.maricafe_back.entity.Category;
-import com.uade.tpo.maricafe_back.entity.Discount;
 import com.uade.tpo.maricafe_back.entity.Product;
-import com.uade.tpo.maricafe_back.entity.dto.CategoryDTO;
 import com.uade.tpo.maricafe_back.entity.dto.CreateProductDTO;
-import com.uade.tpo.maricafe_back.entity.dto.DiscountDTO;
 import com.uade.tpo.maricafe_back.entity.dto.ProductDTO;
 import com.uade.tpo.maricafe_back.exceptions.ResourceNotFoundException;
 import com.uade.tpo.maricafe_back.repository.CategoryRepository;
-import com.uade.tpo.maricafe_back.repository.DiscountRepository;
 import com.uade.tpo.maricafe_back.repository.ProductRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Sort;
@@ -22,15 +18,13 @@ import java.util.Optional;
 public class ProductServiceImpl implements IProductService {
 
     private final ProductRepository productRepository;
-    private final DiscountRepository discountRepository;
     private final CategoryRepository categoryRepository;
     private final ModelMapper modelMapper;
 
-    public ProductServiceImpl(ProductRepository productRepository, DiscountRepository discountRepository, CategoryRepository categoryRepository, ModelMapper modelMapper) {
-        this.productRepository = productRepository; //consultas y operaciones sobre productos
-        this.discountRepository = discountRepository; //consultas y operaciones sobre descuentos
-        this.categoryRepository = categoryRepository; //para validar categorías existentes
-        this.modelMapper = modelMapper; //para convertir entidades (ej: Product) a dto (ProductDTO)
+    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, ModelMapper modelMapper) {
+        this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
+        this.modelMapper = modelMapper;
     }
 
     //esto me permite ordenar productos por precio asc/desc desde el endpoint. traduce un string (ej: price,asc) en un objeto sort
@@ -49,24 +43,10 @@ public class ProductServiceImpl implements IProductService {
         return modelMapper.map(p, ProductDTO.class);
     }
 
-    private DiscountDTO toDTO(Discount d) {
-        DiscountDTO dto = new DiscountDTO();
-        dto.setDiscountId(d.getDiscountId());
-        dto.setProductId(d.getProduct().getProductId());
-        dto.setDiscountPercentage(d.getDiscountPercentage());
-        return dto;
-    }
 
     //3.1 buscar productos con stock y filtros opcionales
-    // URI MIRA ACÁ
     @Override
     public List<Product> findAvailableProducts(String q, Double priceMin, Double priceMax) {
-
-        /*
-        * return categoryRepository.findAll()
-                .stream()
-                .map(cadaCategoriasd -> modelMapper.map(cadaCategoriasd, CategoryDTO.class)).toList();
-        * */
 
         if (priceMin != null && priceMax != null && priceMin > priceMax) {
             throw new IllegalArgumentException("priceMin no puede ser mayor a priceMax");
@@ -132,38 +112,6 @@ public class ProductServiceImpl implements IProductService {
         return productRepository
                 .findByCategory_CategoryIdAndStockGreaterThan(categoryId, 0, sort)
                 .stream().map(this::toDTO).toList();
-    }
-
-    //3.6 crear o aplicar descuento a un producto
-    @Override
-    public DiscountDTO createDiscount(Integer productId, double percentage) {
-        if (percentage < 0 || percentage > 100) {
-            throw new IllegalArgumentException("discountPercentage debe estar entre 0 y 100");
-        }
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("El producto: " + productId + " no fue encontrado"));
-
-        Discount discount = Discount.builder()
-                .product(product)
-                .discountPercentage(percentage)
-                .build();
-
-        discount = discountRepository.save(discount);
-        return toDTO(discount);
-    }
-
-    //3.7 actualizar descuento existente
-    @Override
-    public DiscountDTO updateDiscount(Integer discountId, double percentage) {
-        if (percentage < 0 || percentage > 100) {
-            throw new IllegalArgumentException("discountPercentage debe estar entre 0 y 100");
-        }
-        Discount discount = discountRepository.findById(discountId)
-                .orElseThrow(() -> new IllegalArgumentException("El descuento: " + discountId + " no fue encontrada"));
-
-        discount.setDiscountPercentage(percentage);
-        discount = discountRepository.save(discount);
-        return toDTO(discount);
     }
 
     // 4.1 crear producto (solo ADMIN)
