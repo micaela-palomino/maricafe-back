@@ -14,7 +14,6 @@ import com.uade.tpo.maricafe_back.repository.OrderItemRepository;
 import com.uade.tpo.maricafe_back.repository.ProductRepository;
 import com.uade.tpo.maricafe_back.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,7 +31,6 @@ public class OrderServiceImpl implements IOrderService {
     private final OrderItemRepository orderItemRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
-    private final ModelMapper modelMapper;
 
     private User getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -45,6 +43,26 @@ public class OrderServiceImpl implements IOrderService {
 
         return userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado: " + userEmail));
+    }
+
+    private OrderDTO convertOrderToDTO(Order order) {
+        // Obtener los OrderItems de esta orden
+        List<OrderItem> orderItems = orderItemRepository.findByOrderOrderId(order.getOrderId());
+        
+        // Crear ItemDTO para cada OrderItem
+        List<ItemDTO> itemDTOs = orderItems.stream()
+                .map(orderItem -> ItemDTO.builder()
+                        .name(orderItem.getProduct().getTitle())
+                        .quantity(orderItem.getQuantity())
+                        .build())
+                .toList();
+        
+        return OrderDTO.builder()
+                .orderId(order.getOrderId())
+                .orderDate(order.getOrderDate())
+                .totalPrice(order.getTotalPrice())
+                .items(itemDTOs)
+                .build();
     }
 
     @Override
@@ -123,25 +141,7 @@ public class OrderServiceImpl implements IOrderService {
         // Buscar solo las ordenes del usuario autenticado
         return orderRepository.findByUser(authenticatedUser)
                 .stream()
-                .map(order -> {
-                    // Obtener los OrderItems de esta orden
-                    List<OrderItem> orderItems = orderItemRepository.findByOrderOrderId(order.getOrderId());
-                    
-                    // Crear ItemDTO para cada OrderItem
-                    List<ItemDTO> itemDTOs = orderItems.stream()
-                            .map(orderItem -> ItemDTO.builder()
-                                    .name(orderItem.getProduct().getTitle())
-                                    .quantity(orderItem.getQuantity())
-                                    .build())
-                            .toList();
-                    
-                    return OrderDTO.builder()
-                            .orderId(order.getOrderId())
-                            .orderDate(order.getOrderDate())
-                            .totalPrice(order.getTotalPrice())
-                            .items(itemDTOs)
-                            .build();
-                })
+                .map(this::convertOrderToDTO)
                 .toList();
     }
 
@@ -151,23 +151,7 @@ public class OrderServiceImpl implements IOrderService {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No existe la orden con id: " + id));
         
-        // Obtener los OrderItems de esta orden
-        List<OrderItem> orderItems = orderItemRepository.findByOrderOrderId(order.getOrderId());
-        
-        // Crear ItemDTO para cada OrderItem
-        List<ItemDTO> itemDTOs = orderItems.stream()
-                .map(orderItem -> ItemDTO.builder()
-                        .name(orderItem.getProduct().getTitle())
-                        .quantity(orderItem.getQuantity())
-                        .build())
-                .toList();
-        
-        return OrderDTO.builder()
-                .orderId(order.getOrderId())
-                .orderDate(order.getOrderDate())
-                .totalPrice(order.getTotalPrice())
-                .items(itemDTOs)
-                .build();
+        return convertOrderToDTO(order);
     }
 
     @Override
