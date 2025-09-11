@@ -50,7 +50,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/orders/{id}").hasAuthority(Role.ADMIN.name())
 
                         // Usuarios
-                        .requestMatchers(HttpMethod.PUT, "/users/{userId}").hasAuthority(Role.USER.name())
+                        .requestMatchers(HttpMethod.PUT, "/users/{userId}").hasAnyAuthority(Role.USER.name(), Role.ADMIN.name())
                         .requestMatchers(HttpMethod.GET, "/users").hasAuthority(Role.ADMIN.name())
                         .requestMatchers(HttpMethod.GET, "/users/{userId}").hasAuthority(Role.ADMIN.name())
                         .requestMatchers(HttpMethod.DELETE, "/users/{userId}").hasAuthority(Role.ADMIN.name())
