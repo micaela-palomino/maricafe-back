@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 public class CreateProductDTO {
 
-    @JsonProperty("titleo")
+    @JsonProperty("title")
     private String title;
 
     @JsonProperty("description")
@@ -20,9 +20,6 @@ public class CreateProductDTO {
 
     @JsonProperty("categoryId")
     private Integer categoryId;
-
-    @JsonProperty("metadata")
-    private String metadata;
 
     @JsonProperty("stock")
     private int stock;

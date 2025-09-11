@@ -138,7 +138,6 @@ public class ProductServiceImpl implements IProductService {
                 .description(dto.getDescription())
                 .price(dto.getPrice())
                 .category(category)
-                .metadata(dto.getMetadata())
                 .stock(dto.getStock())
                 .build();
 
@@ -180,9 +179,6 @@ public class ProductServiceImpl implements IProductService {
         }
         if (dto.getPrice() >= 0) {
             product.setPrice(dto.getPrice());
-        }
-        if (dto.getMetadata() != null) {
-            product.setMetadata(dto.getMetadata());
         }
         if (dto.getStock() >= 0) {
             product.setStock(dto.getStock());

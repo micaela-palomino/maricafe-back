@@ -24,9 +24,6 @@ public class ProductDTO {
     @JsonProperty("category")
     private CategoryDTO category;
 
-    @JsonProperty("metadata")
-    private String metadata;
-
     @JsonProperty("stock")
     private int stock;
 }

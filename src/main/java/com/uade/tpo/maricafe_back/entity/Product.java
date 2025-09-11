@@ -23,6 +23,5 @@ public class Product {
     @JoinColumn(name = "categoryId")
     private Category category;
 
-    private String metadata;
     private int stock;
 }
