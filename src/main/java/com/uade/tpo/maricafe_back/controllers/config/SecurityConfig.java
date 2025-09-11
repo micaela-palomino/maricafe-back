@@ -33,7 +33,7 @@ public class SecurityConfig {
                         // Auth público
                         .requestMatchers("/maricafe/auth/**").permitAll()
 
-                        // Categorías
+                        // Categorias
                         .requestMatchers(HttpMethod.GET, "/categories/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/categories/**").hasAuthority(Role.ADMIN.name())
                         .requestMatchers(HttpMethod.PUT, "/categories/**").hasAuthority(Role.ADMIN.name())
@@ -45,7 +45,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/products/**").hasAuthority(Role.ADMIN.name())
                         .requestMatchers(HttpMethod.DELETE, "/products/**").hasAuthority(Role.ADMIN.name())
 
-                        // Órdenes
+                        // Ordenes
                         .requestMatchers(HttpMethod.POST, "/orders").hasAuthority(Role.USER.name())
                         .requestMatchers(HttpMethod.GET, "/orders/user").hasAuthority(Role.USER.name())
                         .requestMatchers(HttpMethod.GET, "/orders/{id}").hasAuthority(Role.ADMIN.name())

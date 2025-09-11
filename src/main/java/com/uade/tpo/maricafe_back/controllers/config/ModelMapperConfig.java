@@ -14,7 +14,7 @@ public class ModelMapperConfig {
     public ModelMapper modelMapper() {
         ModelMapper mapper = new ModelMapper();
         
-        // Configure User to UserDTO mapping
+        // CConfigurar el mapping de User a UserDTO
         mapper.createTypeMap(User.class, UserDTO.class)
                 .addMapping(User::getUserId, UserDTO::setUserId)
                 .addMapping(User::getFirstName, UserDTO::setFirstName)

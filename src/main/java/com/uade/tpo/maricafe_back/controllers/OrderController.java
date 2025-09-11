@@ -35,7 +35,6 @@ public class OrderController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public OrderDTO getOne(@PathVariable Integer id) {
-
         return ordenService.findById(id);
     }
 

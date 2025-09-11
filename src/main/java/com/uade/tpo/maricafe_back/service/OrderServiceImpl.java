@@ -60,7 +60,7 @@ public class OrderServiceImpl implements IOrderService {
         // Crear la orden primero
         Order order = Order.builder()
                 .orderDate(LocalDate.now())
-                .totalPrice(0.0) // Se calculará después
+                .totalPrice(0.0) // Se calculara después
                 .user(authenticatedUser)
                 .build();
 
@@ -120,7 +120,7 @@ public class OrderServiceImpl implements IOrderService {
         // Obtener el usuario autenticado
         User authenticatedUser = getAuthenticatedUser();
 
-        // Buscar solo las órdenes del usuario autenticado
+        // Buscar solo las ordenes del usuario autenticado
         return orderRepository.findByUser(authenticatedUser)
                 .stream()
                 .map(order -> {
