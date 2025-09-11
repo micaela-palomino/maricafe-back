@@ -3,7 +3,7 @@ package com.uade.tpo.maricafe_back.entity.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -16,7 +16,7 @@ public class OrderDTO {
     private Integer orderId;
 
     @JsonProperty("order_date")
-    private LocalDateTime orderDate;
+    private LocalDate orderDate;
 
     @JsonProperty("total_price")
     private double totalPrice;

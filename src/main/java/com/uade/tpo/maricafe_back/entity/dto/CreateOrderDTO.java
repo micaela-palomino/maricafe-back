@@ -9,7 +9,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateOrderDto {
-    @JsonProperty("productos")
-    private List<ProductDTO> productos;
+public class CreateOrderDTO {
+    @JsonProperty("items")
+    private List<OrderItemDTO> items;
 }

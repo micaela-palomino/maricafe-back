@@ -3,10 +3,11 @@ package com.uade.tpo.maricafe_back.service;
 import com.uade.tpo.maricafe_back.entity.Order;
 import com.uade.tpo.maricafe_back.entity.Product;
 import com.uade.tpo.maricafe_back.entity.User;
-import com.uade.tpo.maricafe_back.entity.dto.CreateOrderDto;
+import com.uade.tpo.maricafe_back.entity.dto.CreateOrderDTO;
 import com.uade.tpo.maricafe_back.entity.dto.OrderDTO;
 import com.uade.tpo.maricafe_back.exceptions.ResourceNotFoundException;
 import com.uade.tpo.maricafe_back.repository.OrderRepository;
+import com.uade.tpo.maricafe_back.repository.ProductRepository;
 import com.uade.tpo.maricafe_back.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -15,7 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -24,11 +25,9 @@ public class OrderServiceImpl implements IOrderService {
 
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
+    private final ProductRepository productRepository;
     private final ModelMapper modelMapper; // esto es para mapear de entidad a dto y viceversa
 
-    /**
-     * Obtiene el usuario autenticado desde el contexto de seguridad
-     */
     private User getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -43,26 +42,35 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public OrderDTO create(CreateOrderDto orderDto) {
+    public OrderDTO create(CreateOrderDTO orderDto) {
         // Validar que hay productos en la orden
-        if (orderDto.getProductos() == null || orderDto.getProductos().isEmpty()) {
+        if (orderDto.getItems() == null || orderDto.getItems().isEmpty()) {
             throw new IllegalArgumentException("La orden debe contener al menos un producto");
         }
 
         // Obtener el usuario autenticado
         User authenticatedUser = getAuthenticatedUser();
 
-        List<Product> products = orderDto.getProductos().stream()
-            .map(productDTO -> modelMapper.map(productDTO, Product.class)).toList();
+        List<Product> products = orderDto.getItems().stream()
+            .map(item -> productRepository.findById(item.getProductId())
+            .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado: " + item.getProductId())))
+            .toList();
 
-        // Calcular el total automáticamente usando streams
-        double totalPrice = products.stream()
-                .mapToDouble(Product::getPrice)
-                .sum();
+        // actualizar stock de los productos
+        double totalPrice = 0.0;
+        for (int i = 0; i < products.size(); i++) {
+            Product product = products.get(i);
+            var item = orderDto.getItems().get(i);
+            product.setStock(product.getStock() - item.getQuantity());
+            productRepository.save(product);
+
+            // sumar el precio del producto al total
+            totalPrice += product.getPrice() * item.getQuantity();
+        }
 
         // Crear la orden con el usuario autenticado
         Order order = Order.builder()
-                .orderDate(LocalDateTime.now())
+                .orderDate(LocalDate.now())
                 .totalPrice(totalPrice)
                 .products(products)
                 .user(authenticatedUser)

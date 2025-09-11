@@ -1,6 +1,6 @@
 package com.uade.tpo.maricafe_back.controllers;
 
-import com.uade.tpo.maricafe_back.entity.dto.CreateOrderDto;
+import com.uade.tpo.maricafe_back.entity.dto.CreateOrderDTO;
 import com.uade.tpo.maricafe_back.entity.dto.OrderDTO;
 import com.uade.tpo.maricafe_back.service.IOrderService; // el nombre que vos usaste
 import lombok.RequiredArgsConstructor;
@@ -20,9 +20,7 @@ public class OrderController {
     // 4.1 [POST] "/orders" -> Crear orden del usuario autenticado
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public OrderDTO create(@RequestBody CreateOrderDto order) {
-        // En el próximo paso vamos a cambiar Order por un DTO si querés.
-        // Por ahora delegamos y listo.
+    public OrderDTO create(@RequestBody CreateOrderDTO order) {
         return ordenService.create(order);
     }
 
