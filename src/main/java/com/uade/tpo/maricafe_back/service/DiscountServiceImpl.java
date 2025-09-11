@@ -54,6 +54,13 @@ public class DiscountServiceImpl implements IDiscountService {
         Discount discount = discountRepository.findById(discountId)
                 .orElseThrow(() -> new IllegalArgumentException("El descuento: " + discountId + " no fue encontrado"));
 
+        // Calcular nuevo precio en base al nuevo descuento obteniendo el precio original
+        Product product = discount.getProduct();
+        double precioAntiguo = product.getPrice() / (1 - discount.getDiscountPercentage() / 100);
+        double precioFinal = precioAntiguo * (1 - (percentage / 100));
+        product.setPrice(precioFinal);
+        productRepository.save(product);
+
         discount.setDiscountPercentage(percentage);
         discount = discountRepository.save(discount);
         return modelMapper.map(discount, DiscountDTO.class);

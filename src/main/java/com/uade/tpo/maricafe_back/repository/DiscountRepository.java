@@ -6,6 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DiscountRepository extends JpaRepository<Discount, Integer> {
-    // Ejemplo: buscar descuentos por porcentaje
-    // List<Descuento> findByPorcentajeDescuentoGreaterThan(double porcentaje);
 }
