@@ -12,13 +12,13 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderDTO {
 
-    @JsonProperty("order_id")
+    @JsonProperty("orderId")
     private Integer orderId;
 
-    @JsonProperty("order_date")
+    @JsonProperty("orderDate")
     private LocalDate orderDate;
 
-    @JsonProperty("total_price")
+    @JsonProperty("totalPrice")
     private double totalPrice;
 
     @JsonProperty("items")

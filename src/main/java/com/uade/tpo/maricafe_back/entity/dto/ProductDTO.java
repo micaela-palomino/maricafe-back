@@ -9,19 +9,19 @@ import lombok.*;
 @AllArgsConstructor
 public class ProductDTO {
 
-    @JsonProperty("id_producto")
+    @JsonProperty("productId")
     private Integer idProduct;
 
-    @JsonProperty("titulo")
+    @JsonProperty("title")
     private String title;
 
-    @JsonProperty("descripcion")
+    @JsonProperty("description")
     private String description;
 
-    @JsonProperty("precio")
+    @JsonProperty("price")
     private double price;
 
-    @JsonProperty("categoria")
+    @JsonProperty("category")
     private CategoryDTO category;
 
     @JsonProperty("metadata")

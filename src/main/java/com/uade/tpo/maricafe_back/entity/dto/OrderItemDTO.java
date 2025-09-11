@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderItemDTO {
-    @JsonProperty("producto_id")
+    @JsonProperty("productId")
     private Integer productId;
-    @JsonProperty("cantidad")
+    @JsonProperty("quantity")
     private int quantity;
 }

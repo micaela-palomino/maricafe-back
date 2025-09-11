@@ -13,9 +13,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemDTO {
-    @JsonProperty("nombre")
+    @JsonProperty("name")
     private String name;
 
-    @JsonProperty("cantidad")
+    @JsonProperty("quantity")
     private int quantity;
 }
