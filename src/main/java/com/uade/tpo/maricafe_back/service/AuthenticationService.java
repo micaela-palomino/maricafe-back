@@ -10,6 +10,7 @@ import com.uade.tpo.maricafe_back.controllers.auth.AuthenticationResponse;
 import com.uade.tpo.maricafe_back.controllers.auth.RegisterRequest;
 import com.uade.tpo.maricafe_back.controllers.config.JwtService;
 import com.uade.tpo.maricafe_back.entity.User;
+import com.uade.tpo.maricafe_back.exceptions.UserDuplicateException;
 import com.uade.tpo.maricafe_back.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,11 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request) {
+        // Verificar si ya existe un usuario con este email
+        if (repository.findByEmail(request.getEmail()).isPresent()) {
+            throw new UserDuplicateException(request.getEmail());
+        }
+
         var user = User.builder()
                 .firstName(request.getFirstname())
                 .lastName(request.getLastname())
