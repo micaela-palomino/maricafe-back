@@ -21,7 +21,7 @@ public class ModelMapperConfig {
                 .addMapping(User::getLastName, UserDTO::setLastName)
                 .addMapping(User::getEmail, UserDTO::setEmail)
                 .addMapping(User::getRole, UserDTO::setRole)
-                .addMapping(src -> null, UserDTO::setPassword); // Don't expose password in responses
+                .addMapping(User::getPassword, UserDTO::setPassword); // Include hashed password in responses
         
         return mapper;
     }
