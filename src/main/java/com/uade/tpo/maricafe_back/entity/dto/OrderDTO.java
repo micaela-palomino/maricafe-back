@@ -3,6 +3,7 @@ package com.uade.tpo.maricafe_back.entity.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -11,15 +12,15 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderDTO {
 
-    @JsonProperty("id_orden")
-    private Integer idOrden;
+    @JsonProperty("order_id")
+    private Integer orderId;
 
-    @JsonProperty("fecha_orden")
-    private String fechaOrden;
+    @JsonProperty("order_date")
+    private LocalDateTime orderDate;
 
-    @JsonProperty("precio_total")
-    private double precioTotal;
+    @JsonProperty("total_price")
+    private double totalPrice;
 
-    @JsonProperty("productos")
-    private List<ProductDTO> productos;
+    @JsonProperty("products")
+    private List<ProductDTO> products;
 }
