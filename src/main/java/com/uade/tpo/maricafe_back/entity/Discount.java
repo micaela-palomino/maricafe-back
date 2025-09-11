@@ -13,11 +13,13 @@ public class Discount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "discount_id")
     private Integer discountId;
 
     @ManyToOne
     @JoinColumn(name = "producto_id")
     private Product product;
 
-    private double discountPercentage;
+    @Column(name = "discount_percentage")
+    private Double discountPercentage;
 }

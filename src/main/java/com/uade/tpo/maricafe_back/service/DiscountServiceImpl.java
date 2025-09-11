@@ -37,8 +37,14 @@ public class DiscountServiceImpl implements IDiscountService {
                 .build();
 
         discount = discountRepository.save(discount);
+
+        double precioFinal = product.getPrice() * (1 - (percentage / 100));
+        product.setPrice(precioFinal);
+        productRepository.save(product);
+
         return modelMapper.map(discount, DiscountDTO.class);
     }
+
 
     @Override
     public DiscountDTO updateDiscount(Integer discountId, double percentage) {
