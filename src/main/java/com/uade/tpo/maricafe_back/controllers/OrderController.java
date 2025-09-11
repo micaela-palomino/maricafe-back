@@ -1,6 +1,5 @@
 package com.uade.tpo.maricafe_back.controllers;
 
-import com.uade.tpo.maricafe_back.entity.Order; // usamos la entidad por ahora
 import com.uade.tpo.maricafe_back.entity.dto.CreateOrderDto;
 import com.uade.tpo.maricafe_back.entity.dto.OrderDTO;
 import com.uade.tpo.maricafe_back.service.IOrderService; // el nombre que vos usaste
@@ -34,12 +33,12 @@ public class OrderController {
         return ordenService.findMine();
     }
 
-    // 4.3 [GET] "/orders/{id}" -> Obtener una orden propia por id
+    // 4.3 [GET] "/orders/{id}" -> Obtener una orden por id (solo ADMIN)
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public OrderDTO getOne(@PathVariable Integer id) {
 
-        return ordenService.findMyOrderById(id);
+        return ordenService.findById(id);
     }
 
     @DeleteMapping("/{id}")
