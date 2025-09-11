@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 public class CategoryDTO {
 
-    @JsonProperty("categoryId")
+    @JsonProperty("category_id")
     private Integer categoryId;
 
     @JsonProperty("name")

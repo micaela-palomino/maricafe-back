@@ -18,7 +18,7 @@ public class CreateProductDTO {
     @JsonProperty("price")
     private double price;
 
-    @JsonProperty("categoryId")
+    @JsonProperty("category_id")
     private Integer categoryId;
 
     @JsonProperty("stock")

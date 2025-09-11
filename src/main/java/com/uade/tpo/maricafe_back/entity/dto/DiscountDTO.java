@@ -9,12 +9,12 @@ import lombok.*;
 @AllArgsConstructor
 public class DiscountDTO {
 
-    @JsonProperty("discountId")
+    @JsonProperty("discount_id")
     private Integer discountId;
 
-    @JsonProperty("productId")
+    @JsonProperty("product_id")
     private Integer productId;
 
-    @JsonProperty("discountPercentage")
+    @JsonProperty("discount_percentage")
     private double discountPercentage;
 }

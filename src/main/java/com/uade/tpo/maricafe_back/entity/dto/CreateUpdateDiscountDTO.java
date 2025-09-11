@@ -9,6 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 public class CreateUpdateDiscountDTO {
 
-    @JsonProperty("discountPercentage")
+    @JsonProperty("discount_percentage")
     private double discountPercentage;
 }
