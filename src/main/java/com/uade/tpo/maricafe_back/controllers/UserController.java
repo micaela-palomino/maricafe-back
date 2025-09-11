@@ -28,12 +28,6 @@ public class UserController {
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/email/{email}")
-    public ResponseEntity<UserDTO> getUserByEmail(@PathVariable String email) {
-        Optional<UserDTO> user = this.userService.getUserByEmail(email);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable Integer userId) {
         userService.deleteUserById(userId);

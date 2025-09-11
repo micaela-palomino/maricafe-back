@@ -51,7 +51,9 @@ public class SecurityConfig {
 
                         // Usuarios
                         .requestMatchers(HttpMethod.PUT, "/users/{userId}").hasAuthority(Role.USER.name())
-                        .requestMatchers("/users/**").hasAuthority(Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.GET, "/users").hasAuthority(Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.GET, "/users/{userId}").hasAuthority(Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.DELETE, "/users/{userId}").hasAuthority(Role.ADMIN.name())
 
                         // Descuentos
                         .requestMatchers("/discounts/**").hasAuthority(Role.ADMIN.name())
