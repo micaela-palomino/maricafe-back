@@ -21,6 +21,6 @@ public class OrderDTO {
     @JsonProperty("total_price")
     private double totalPrice;
 
-    @JsonProperty("products")
-    private List<ProductDTO> products;
+    @JsonProperty("items")
+    private List<ItemDTO> items;
 }

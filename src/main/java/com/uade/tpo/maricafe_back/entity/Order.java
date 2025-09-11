@@ -21,13 +21,8 @@ public class Order {
     private LocalDate orderDate;
     private double totalPrice;
 
-    @ManyToMany
-    @JoinTable(
-            name = "product_order",
-            joinColumns = @JoinColumn(name = "orderId"),
-            inverseJoinColumns = @JoinColumn(name = "productId")
-    )
-    private List<Product> products;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OrderItem> orderItems;
 
     @ManyToOne
     @JoinColumn(name = "userId")
