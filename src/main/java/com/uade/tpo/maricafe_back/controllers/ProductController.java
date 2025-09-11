@@ -24,11 +24,11 @@ public class ProductController {
     // 3.1 Listar productos (excluye sin stock)
     @GetMapping("/filterPrices")
     public List<Product> getAllProductsFiltered(
-            @RequestParam(required = false) String q,
+            @RequestParam(required = false) String title,
             @RequestParam(required = false) Double priceMin,
             @RequestParam(required = false) Double priceMax
     ) {
-        return productService.findAvailableProducts(q, priceMin, priceMax);
+        return productService.findAvailableProducts(title, priceMin, priceMax);
     }
 
     // 3.2 Obtener producto por id
