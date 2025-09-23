@@ -50,6 +50,8 @@ public class ProductController {
         return productService.findImagesByProductId(id);
     }
 
+
+
     //3.4 Obtener productos por cualquiera de sus atributos (title, description, priceMax), teniendo en cuents que tal vez solo pasa uno de sus atributos
     @GetMapping("/attributes")
     public List<ProductDTO> getProductsByAttributes(

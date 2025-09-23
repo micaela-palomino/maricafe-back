@@ -1,21 +1,24 @@
 package com.uade.tpo.maricafe_back.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import lombok.Data;
+import jakarta.persistence.*;
+import lombok.*;
 
-
-//Despues vemos si sacamos esta clase o no.
 @Entity
-@Data
+@Table(name = "images")
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor @Builder
 public class Image {
     @Id
-    private Integer id;
-    private String url;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "productId")
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name = "data", nullable = false, columnDefinition = "LONGBLOB")
+    private byte[] data;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false) // FK hacia Product.productId
     private Product product;
+
 }

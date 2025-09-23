@@ -1,6 +1,6 @@
 package com.uade.tpo.maricafe_back.repository;
 
-
+import com.uade.tpo.maricafe_back.entity.Image;
 import com.uade.tpo.maricafe_back.entity.Product;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,34 +14,45 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
 
-    // 1. Buscar productos disponibles con filtros opcionales
-    @Query("SELECT p FROM Product p WHERE p.stock > 0 "
-            + "AND (:q IS NULL OR LOWER(p.title) LIKE %:q%) "
-            + "AND (:priceMin IS NULL OR p.price >= :priceMin) "
-            + "AND (:priceMax IS NULL OR p.price <= :priceMax)")
-    List<Product> findAvailableProducts(String q, Double priceMin, Double priceMax);
+    // 1) Buscar productos disponibles con filtros opcionales (agrego @Param)
+    @Query("""
+           SELECT p FROM Product p
+           WHERE p.stock > 0
+             AND (:q IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :q, '%')))
+             AND (:priceMin IS NULL OR p.price >= :priceMin)
+             AND (:priceMax IS NULL OR p.price <= :priceMax)
+           """)
+    List<Product> findAvailableProducts(@Param("q") String q,
+                                        @Param("priceMin") Double priceMin,
+                                        @Param("priceMax") Double priceMax);
 
-    // 2. Buscar producto por id y stock mayor a 0
+    // 2) Buscar producto por id y stock mayor a 0 (el campo es productId)
     Optional<Product> findByProductIdAndStockGreaterThan(Integer productId, int stockIsGreaterThan);
 
-    // 3. Buscar imágenes por id de producto
-    @Query("SELECT i.url FROM Image i WHERE i.product.productId = :id")
-    List<String> findImagesByProductId(Integer id);
+    // 3) **ELIMINADO** el método que hacía SELECT i.url ... (no existe 'url' en Image).
 
-    // 4. Buscar productos por atributos (title, description, priceMax) - solo con stock
-    @Query("SELECT p FROM Product p WHERE p.stock > 0 " +
-            "AND (:title IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :title, '%'))) AND " +
-            "(:description IS NULL OR LOWER(p.description) LIKE LOWER(CONCAT('%', :description, '%'))) AND " +
-            "(:priceMax IS NULL OR p.price <= :priceMax)")
+    // 3-b) Si querés traer IMÁGENES por productId desde ProductRepository (con join)
+    @Query("SELECT i FROM Product p JOIN p.images i WHERE p.productId = :productId")
+    List<Image> findImagesByProductId(@Param("productId") Integer productId);
+
+    // 4) Buscar por atributos (agrego @Param y LOWER/CONCAT)
+    @Query("""
+           SELECT p FROM Product p
+           WHERE p.stock > 0
+             AND (:title IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :title, '%')))
+             AND (:description IS NULL OR LOWER(p.description) LIKE LOWER(CONCAT('%', :description, '%')))
+             AND (:priceMax IS NULL OR p.price <= :priceMax)
+           """)
     List<Product> findByAttributes(@Param("title") String title,
                                    @Param("description") String description,
                                    @Param("priceMax") Double priceMax);
 
-    // 5. Buscar productos por categoryId y stock mayor a 0 (para DTO). Tambien los ordena
+    // 5) Por categoryId y con stock, ordenado
     List<Product> findByCategory_CategoryIdAndStockGreaterThan(Integer categoryId, int stock, Sort sort);
 
-    // 6. Buscar productos con stock mayor a 0 y orden. Esto me devuelve una lista de productos que tenga mas stick que el valor pasado (ordenado)
+    // 6) Stock > X con orden
     List<Product> findByStockGreaterThan(int stock, Sort sort);
 
-    boolean findByProductId(Integer productId);
+    // 7) **Corregido**: si querías chequear existencia, debe ser 'existsBy...'
+    boolean existsByProductId(Integer productId);
 }
