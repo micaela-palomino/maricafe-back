@@ -42,8 +42,21 @@ public class OrderController {
 
     @DeleteMapping("/{id}")
     public ApiResponseDTO<Void> delete(@PathVariable Integer id) {
-        ordenService.deleteOrderById(id);
-        return ApiResponseDTO.success("Orden eliminada con éxito");
+        ordenService.deactivateOrder(id);
+        return ApiResponseDTO.success("Orden desactivada con éxito");
+    }
+
+    // Endpoints para administradores
+    @GetMapping("/admin/active")
+    @ResponseStatus(HttpStatus.OK)
+    public List<OrderDTO> getAllActiveOrders() {
+        return ordenService.findAllActiveOrders();
+    }
+
+    @GetMapping("/admin/inactive")
+    @ResponseStatus(HttpStatus.OK)
+    public List<OrderDTO> getAllInactiveOrders() {
+        return ordenService.findAllInactiveOrders();
     }
 
 }

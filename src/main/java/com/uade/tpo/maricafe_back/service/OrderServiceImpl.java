@@ -61,6 +61,7 @@ public class OrderServiceImpl implements IOrderService {
                 .orderId(order.getOrderId())
                 .orderDate(order.getOrderDate())
                 .totalPrice(order.getTotalPrice())
+                .active(order.isActive())
                 .items(itemDTOs)
                 .build();
     }
@@ -129,6 +130,7 @@ public class OrderServiceImpl implements IOrderService {
                 .orderId(created.getOrderId())
                 .orderDate(created.getOrderDate())
                 .totalPrice(created.getTotalPrice())
+                .active(created.isActive())
                 .items(itemDTOs)
                 .build();
     }
@@ -138,8 +140,8 @@ public class OrderServiceImpl implements IOrderService {
         // Obtener el usuario autenticado
         User authenticatedUser = getAuthenticatedUser();
 
-        // Buscar solo las ordenes del usuario autenticado
-        return orderRepository.findByUser(authenticatedUser)
+        // Buscar solo las ordenes activas del usuario autenticado
+        return orderRepository.findByUserAndActiveTrue(authenticatedUser)
                 .stream()
                 .map(this::convertOrderToDTO)
                 .toList();
@@ -147,18 +149,38 @@ public class OrderServiceImpl implements IOrderService {
 
     @Override
     public OrderDTO findById(Integer id) {
-        // Solo admins pueden acceder a cualquier orden por ID
-        Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No existe la orden con id: " + id));
+        // Solo admins pueden acceder a cualquier orden activa por ID
+        Order order = orderRepository.findByOrderIdAndActiveTrue(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No existe la orden activa con id: " + id));
         
         return convertOrderToDTO(order);
     }
 
     @Override
-    public void deleteOrderById(Integer id) {
-        if(!orderRepository.existsById(id)){
-            throw new ResourceNotFoundException("La orden con id: " + id + " no existe");
-        }
-        orderRepository.deleteById(id);
+    public void deactivateOrder(Integer id) {
+        Order order = orderRepository.findByOrderIdAndActiveTrue(id)
+                .orElseThrow(() -> new ResourceNotFoundException("La orden con id: " + id + " no existe o ya está inactiva"));
+        
+        // Marcar como inactiva (soft delete)
+        order.setActive(false);
+        orderRepository.save(order);
+    }
+
+    @Override
+    public List<OrderDTO> findAllActiveOrders() {
+        // Solo para administradores - obtener todas las órdenes activas
+        return orderRepository.findByActiveTrue()
+                .stream()
+                .map(this::convertOrderToDTO)
+                .toList();
+    }
+
+    @Override
+    public List<OrderDTO> findAllInactiveOrders() {
+        // Solo para administradores - obtener todas las órdenes inactivas
+        return orderRepository.findByActiveFalse()
+                .stream()
+                .map(this::convertOrderToDTO)
+                .toList();
     }
 }

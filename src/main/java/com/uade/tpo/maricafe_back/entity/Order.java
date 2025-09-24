@@ -20,6 +20,10 @@ public class Order {
 
     private LocalDate orderDate;
     private double totalPrice;
+    
+    @Column(name = "active", nullable = false)
+    @Builder.Default
+    private boolean active = true; // Por defecto las órdenes están activas
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderItem> orderItems;

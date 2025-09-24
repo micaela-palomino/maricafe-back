@@ -6,8 +6,17 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Integer> {
     List<Order> findByUser(User user);
+    
+    // Métodos para filtrar solo órdenes activas
+    List<Order> findByUserAndActiveTrue(User user);
+    Optional<Order> findByOrderIdAndActiveTrue(Integer orderId);
+    List<Order> findByActiveTrue();
+    
+    // Métodos para administradores
+    List<Order> findByActiveFalse();
 }
