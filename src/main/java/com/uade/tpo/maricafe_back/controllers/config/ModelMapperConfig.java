@@ -1,7 +1,7 @@
 package com.uade.tpo.maricafe_back.controllers.config;
 
 import com.uade.tpo.maricafe_back.entity.User;
-import com.uade.tpo.maricafe_back.entity.dto.UserDTO;
+import com.uade.tpo.maricafe_back.entity.dto.UserResponseDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,14 +14,13 @@ public class ModelMapperConfig {
     public ModelMapper modelMapper() {
         ModelMapper mapper = new ModelMapper();
         
-        // CConfigurar el mapping de User a UserDTO
-        mapper.createTypeMap(User.class, UserDTO.class)
-                .addMapping(User::getUserId, UserDTO::setUserId)
-                .addMapping(User::getFirstName, UserDTO::setFirstName)
-                .addMapping(User::getLastName, UserDTO::setLastName)
-                .addMapping(User::getEmail, UserDTO::setEmail)
-                .addMapping(User::getRole, UserDTO::setRole)
-                .addMapping(User::getPassword, UserDTO::setPassword); // Include hashed password in responses
+        // Configurar el mapping de User a UserResponseDTO (sin password)
+        mapper.createTypeMap(User.class, UserResponseDTO.class)
+                .addMapping(User::getUserId, UserResponseDTO::setUserId)
+                .addMapping(User::getFirstName, UserResponseDTO::setFirstName)
+                .addMapping(User::getLastName, UserResponseDTO::setLastName)
+                .addMapping(User::getEmail, UserResponseDTO::setEmail)
+                .addMapping(User::getRole, UserResponseDTO::setRole);
         
         return mapper;
     }

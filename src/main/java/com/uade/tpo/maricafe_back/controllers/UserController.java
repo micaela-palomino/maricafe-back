@@ -1,6 +1,8 @@
 package com.uade.tpo.maricafe_back.controllers;
 
-import com.uade.tpo.maricafe_back.entity.dto.UserDTO;
+import com.uade.tpo.maricafe_back.entity.dto.ChangePasswordDTO;
+import com.uade.tpo.maricafe_back.entity.dto.UserResponseDTO;
+import com.uade.tpo.maricafe_back.entity.dto.UserUpdateDTO;
 import com.uade.tpo.maricafe_back.service.IUserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,13 +20,13 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDTO>> getUsers() {
+    public ResponseEntity<List<UserResponseDTO>> getUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable Integer userId) {
-        Optional<UserDTO> user = this.userService.getUserById(userId);
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Integer userId) {
+        Optional<UserResponseDTO> user = this.userService.getUserById(userId);
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -36,11 +38,21 @@ public class UserController {
 
     //Modificar el usuario para validar que solo el mismo usuario pueda modificar sus datos
     @PutMapping("/{userId}")
-    public ResponseEntity<UserDTO> updateUser(
+    public ResponseEntity<UserResponseDTO> updateUser(
             @PathVariable Integer userId,
-            @RequestBody UserDTO dto) {
+            @RequestBody UserUpdateDTO dto) {
 
-        UserDTO updated = userService.updateUser(userId, dto);
+        UserResponseDTO updated = userService.updateUser(userId, dto);
         return ResponseEntity.ok(updated); // 200 OK con el usuario actualizado
     }
+
+    @PutMapping("/{userId}/change-password")
+    public ResponseEntity<Void> changePassword(
+            @PathVariable Integer userId,
+            @RequestBody ChangePasswordDTO dto
+    ) {
+        userService.changePassword(userId, dto.getNewPassword());
+        return ResponseEntity.noContent().build();
+    }
 }
+

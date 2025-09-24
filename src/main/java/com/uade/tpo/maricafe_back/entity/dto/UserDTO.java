@@ -22,6 +22,7 @@ public class UserDTO {
     @JsonProperty("email")
     private String email;
 
+    //se oculta el password en el dto
     @JsonProperty("password")
     private String password;
 

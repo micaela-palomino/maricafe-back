@@ -1,6 +1,7 @@
 package com.uade.tpo.maricafe_back.service;
 
-import com.uade.tpo.maricafe_back.entity.dto.UserDTO;
+import com.uade.tpo.maricafe_back.entity.dto.UserResponseDTO;
+import com.uade.tpo.maricafe_back.entity.dto.UserUpdateDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -8,15 +9,17 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IUserService {
-    Page<UserDTO> getUsers(Pageable pageable);
+    Page<UserResponseDTO> getUsers(Pageable pageable);
     
-    List<UserDTO> getAllUsers();
+    List<UserResponseDTO> getAllUsers();
     
-    Optional<UserDTO> getUserById(Integer id);
+    Optional<UserResponseDTO> getUserById(Integer id);
     
     void deleteUserById(Integer id);
     
-    UserDTO updateUser(Integer id, UserDTO dto);
+    UserResponseDTO updateUser(Integer id, UserUpdateDTO dto);
     
-    Optional<UserDTO> getUserByEmail(String email);
+    Optional<UserResponseDTO> getUserByEmail(String email);
+    
+    void changePassword(Integer id, String newPassword);
 }
