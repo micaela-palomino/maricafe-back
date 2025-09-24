@@ -1,5 +1,6 @@
 package com.uade.tpo.maricafe_back.controllers;
 
+import com.uade.tpo.maricafe_back.entity.dto.ApiResponseDTO;
 import com.uade.tpo.maricafe_back.entity.dto.CategoryDTO;
 import com.uade.tpo.maricafe_back.entity.dto.CreateCategoryDTO;
 import com.uade.tpo.maricafe_back.service.ICategoryService;
@@ -33,27 +34,27 @@ public class CategoryController {
 
 
     @PostMapping
-    public ResponseEntity<CategoryDTO> createCategoria(@RequestBody CreateCategoryDTO dto) {
+    public ResponseEntity<ApiResponseDTO<CategoryDTO>> createCategoria(@RequestBody CreateCategoryDTO dto) {
         CategoryDTO saved = categoriaService.createCategory(dto);
 
         return ResponseEntity
                 .created(URI.create("/categories/" + saved.getCategoryId()))
-                .body(saved);
+                .body(ApiResponseDTO.success("Categoría creada con éxito", saved));
     }
 
     @DeleteMapping("/{categoryId}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable Integer categoryId) {
+    public ResponseEntity<ApiResponseDTO<Void>> deleteCategory(@PathVariable Integer categoryId) {
         categoriaService.deleteCategoryById(categoryId);
-        return ResponseEntity.noContent().build(); // 204 No Content
+        return ResponseEntity.ok(ApiResponseDTO.success("Categoría eliminada con éxito"));
     }
 
     @PutMapping("/{categoryId}")
-    public ResponseEntity<CategoryDTO> updateCategory(
+    public ResponseEntity<ApiResponseDTO<CategoryDTO>> updateCategory(
             @PathVariable Integer categoryId,
             @RequestBody CreateCategoryDTO dto) {
 
         CategoryDTO updated = categoriaService.updateCategory(categoryId, dto);
-        return ResponseEntity.ok(updated); // 200 OK con la categoría actualizada
+        return ResponseEntity.ok(ApiResponseDTO.success("Categoría actualizada con éxito", updated));
     }
 
 }

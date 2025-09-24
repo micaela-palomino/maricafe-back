@@ -2,11 +2,13 @@ package com.uade.tpo.maricafe_back.service;
 
 import com.uade.tpo.maricafe_back.entity.Category;
 import com.uade.tpo.maricafe_back.entity.Product;
+import com.uade.tpo.maricafe_back.entity.Discount;
 import com.uade.tpo.maricafe_back.entity.dto.CreateProductDTO;
 import com.uade.tpo.maricafe_back.entity.dto.ProductDTO;
 import com.uade.tpo.maricafe_back.exceptions.ResourceNotFoundException;
 import com.uade.tpo.maricafe_back.repository.CategoryRepository;
 import com.uade.tpo.maricafe_back.repository.ProductRepository;
+import com.uade.tpo.maricafe_back.repository.DiscountRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -20,11 +22,13 @@ public class ProductServiceImpl implements IProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final DiscountRepository discountRepository;
     private final ModelMapper modelMapper;
 
-    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, ModelMapper modelMapper) {
+    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, DiscountRepository discountRepository, ModelMapper modelMapper) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
+        this.discountRepository = discountRepository;
         this.modelMapper = modelMapper;
     }
 
@@ -41,13 +45,30 @@ public class ProductServiceImpl implements IProductService {
 
     //convierte entidades a dto para no exponer directamente a la BD
     private ProductDTO toDTO(Product p) {
-        return modelMapper.map(p, ProductDTO.class);
+        ProductDTO dto = modelMapper.map(p, ProductDTO.class);
+        // Enriquecer con información de descuentos si existe un descuento asociado
+        Optional<Discount> lastDiscount = discountRepository.findTopByProduct_ProductIdOrderByDiscountIdDesc(p.getProductId());
+        if (lastDiscount.isPresent()) {
+            double percentage = lastDiscount.get().getDiscountPercentage();
+            dto.setDiscountPercentage(percentage);
+            // El precio actual del producto ya es el precio con descuentos en este modelo
+            double newPrice = p.getPrice();
+            // Calcular precio viejo (antes del descuento). Evitar división por cero si percentage == 100
+            Double oldPrice = (percentage >= 100) ? null : newPrice / (1 - (percentage / 100.0));
+            dto.setOldPrice(oldPrice);
+            dto.setNewPrice(newPrice);
+        } else {
+            dto.setDiscountPercentage(null);
+            dto.setOldPrice(null);
+            dto.setNewPrice(null);
+        }
+        return dto;
     }
 
 
     //3.1 buscar productos con stock y filtros opcionales
     @Override
-    public List<Product> findAvailableProducts(String q, Double priceMin, Double priceMax) {
+    public List<ProductDTO> findAvailableProducts(String q, Double priceMin, Double priceMax) {
 
         if (priceMin != null && priceMax != null && priceMin > priceMax) {
             throw new IllegalArgumentException("priceMin no puede ser mayor a priceMax");
@@ -55,23 +76,25 @@ public class ProductServiceImpl implements IProductService {
         if (q != null && !q.isBlank()) {
             q = q.toLowerCase();
         }
-        return productRepository.findAvailableProducts(q, priceMin, priceMax);
+        return productRepository.findAvailableProducts(q, priceMin, priceMax)
+                .stream()
+                .map(this::toDTO)
+                .toList();
     }
 
     //3.2 buscar producto por id y que tenga stock
     @Override
-    public Product findByIdAndAvailable(Integer id) {
-        return productRepository.findByProductIdAndStockGreaterThan(id, 0)
+    public ProductDTO findByIdAndAvailable(Integer id) {
+        Product product = productRepository.findByProductIdAndStockGreaterThan(id, 0)
                 .orElseThrow(() -> new IllegalArgumentException("El producto con id: " + id + " no fue encontrado o no tiene stock"));
+        return toDTO(product);
     }
 
     @Override
     public ProductDTO findById(Integer id) {
-        Optional<Product> product = productRepository.findById(id);
-        if (product.isEmpty()) {
-            throw new ResourceNotFoundException("No se encuentra producto con id: " + id);
-        }
-        return modelMapper.map(product, ProductDTO.class);
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No se encuentra producto con id: " + id));
+        return toDTO(product);
     }
 
     //3.3 buscar imagenes por id de producto
@@ -93,7 +116,7 @@ public class ProductServiceImpl implements IProductService {
     public List<ProductDTO> findProductsByAttributes(String title, String description, Double priceMax) {
         return productRepository.findByAttributes(title, description, priceMax)
                 .stream()
-                .map(product -> modelMapper.map(product, ProductDTO.class))
+                .map(this::toDTO)
                 .toList();
     }
 

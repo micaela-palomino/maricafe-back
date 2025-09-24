@@ -1,6 +1,5 @@
 package com.uade.tpo.maricafe_back.service;
 
-import com.uade.tpo.maricafe_back.entity.Product;
 import com.uade.tpo.maricafe_back.entity.dto.CreateProductDTO;
 import com.uade.tpo.maricafe_back.entity.dto.ProductDTO;
 
@@ -10,10 +9,10 @@ import java.util.List;
 public interface IProductService {
 
     // 3.1 listar productos (con stock) con filtros opcionales
-    List<Product> findAvailableProducts(String q, Double priceMin, Double priceMax);
+    List<ProductDTO> findAvailableProducts(String q, Double priceMin, Double priceMax);
 
     // 3.2 obtener producto por id (si tiene stock)
-    Product findByIdAndAvailable(Integer id);
+    ProductDTO findByIdAndAvailable(Integer id);
 
     // 3.2 obtener producto por id para admin
     ProductDTO findById(Integer id);
@@ -40,3 +39,4 @@ public interface IProductService {
     // 4.3 eliminar producto
     void deleteProduct(Integer productId);
 }
+

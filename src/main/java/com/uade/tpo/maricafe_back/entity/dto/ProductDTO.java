@@ -26,4 +26,14 @@ public class ProductDTO {
 
     @JsonProperty("stock")
     private int stock;
+
+    // Información de descuentos (solo cuando hay descuentos asociado)
+    @JsonProperty("discount_percentage")
+    private Double discountPercentage; // en %
+
+    @JsonProperty("old_price")
+    private Double oldPrice; // precio antes del descuento
+
+    @JsonProperty("new_price")
+    private Double newPrice; // precio con el descuento aplicado (generalmente igual a price actual)
 }

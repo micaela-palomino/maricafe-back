@@ -1,6 +1,6 @@
 package com.uade.tpo.maricafe_back.controllers;
 
-import com.uade.tpo.maricafe_back.entity.Product;
+import com.uade.tpo.maricafe_back.entity.dto.ApiResponseDTO;
 import com.uade.tpo.maricafe_back.entity.dto.CreateProductDTO;
 import com.uade.tpo.maricafe_back.entity.dto.ProductDTO;
 import com.uade.tpo.maricafe_back.service.IProductService;
@@ -23,7 +23,7 @@ public class ProductController {
 
     // 3.1 Listar productos (excluye sin stock)
     @GetMapping("/filterPrices")
-    public List<Product> getAllProductsFiltered(
+    public List<ProductDTO> getAllProductsFiltered(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) Double priceMin,
             @RequestParam(required = false) Double priceMax
@@ -33,7 +33,7 @@ public class ProductController {
 
     // 3.2 Obtener producto por id
     @GetMapping("/{id}")
-    public Product getProductById(@PathVariable Integer id) {
+    public ProductDTO getProductById(@PathVariable Integer id) {
         return productService.findByIdAndAvailable(id);
     }
 
@@ -79,28 +79,27 @@ public class ProductController {
     // 4.1 POST /products - Crear producto (solo ADMIN)
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<ProductDTO> createProduct(@RequestBody CreateProductDTO dto) {
+    public ResponseEntity<ApiResponseDTO<ProductDTO>> createProduct(@RequestBody CreateProductDTO dto) {
         ProductDTO saved = productService.createProduct(dto);
         return ResponseEntity
                 .created(URI.create("/products/" + saved.getIdProduct()))
-                .body(saved);
+                .body(ApiResponseDTO.success("Producto creado con éxito", saved));
     }
 
     // 4.2 PUT /products/{id} - Actualizar producto (solo ADMIN)
     @PutMapping("/{id}")
-    public ResponseEntity<ProductDTO> updateProduct(
+    public ResponseEntity<ApiResponseDTO<ProductDTO>> updateProduct(
             @PathVariable Integer id,
             @RequestBody CreateProductDTO dto) {
         ProductDTO updated = productService.updateProduct(id, dto);
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.ok(ApiResponseDTO.success("Producto actualizado con éxito", updated));
     }
 
     // 4.3 DELETE /products/{id} - Eliminar producto (solo ADMIN)
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> deleteProduct(@PathVariable Integer id) {
+    public ResponseEntity<ApiResponseDTO<Void>> deleteProduct(@PathVariable Integer id) {
         productService.deleteProduct(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponseDTO.success("Producto eliminado con éxito"));
     }
 
 }

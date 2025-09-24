@@ -1,5 +1,6 @@
 package com.uade.tpo.maricafe_back.controllers;
 
+import com.uade.tpo.maricafe_back.entity.dto.ApiResponseDTO;
 import com.uade.tpo.maricafe_back.entity.dto.CreateOrderDTO;
 import com.uade.tpo.maricafe_back.entity.dto.OrderDTO;
 import com.uade.tpo.maricafe_back.service.IOrderService; // el nombre que vos usaste
@@ -20,8 +21,9 @@ public class OrderController {
     // 4.1 [POST] "/orders" -> Crear orden del usuario autenticado
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public OrderDTO create(@RequestBody CreateOrderDTO order) {
-        return ordenService.create(order);
+    public ApiResponseDTO<OrderDTO> create(@RequestBody CreateOrderDTO order) {
+        OrderDTO created = ordenService.create(order);
+        return ApiResponseDTO.success("Orden creada con éxito", created);
     }
 
     // 4.2 [GET] "/user/orders" -> Listar órdenes del usuario autenticado
@@ -39,9 +41,9 @@ public class OrderController {
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Integer id) {
+    public ApiResponseDTO<Void> delete(@PathVariable Integer id) {
         ordenService.deleteOrderById(id);
+        return ApiResponseDTO.success("Orden eliminada con éxito");
     }
 
 }

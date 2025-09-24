@@ -2,6 +2,8 @@ package com.uade.tpo.maricafe_back.controllers.config;
 
 import com.uade.tpo.maricafe_back.entity.User;
 import com.uade.tpo.maricafe_back.entity.dto.UserResponseDTO;
+import com.uade.tpo.maricafe_back.entity.Product;
+import com.uade.tpo.maricafe_back.entity.dto.ProductDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,9 +23,12 @@ public class ModelMapperConfig {
                 .addMapping(User::getLastName, UserResponseDTO::setLastName)
                 .addMapping(User::getEmail, UserResponseDTO::setEmail)
                 .addMapping(User::getRole, UserResponseDTO::setRole);
-        
+
+        // Configurar mapping de Product a ProductDTO (solo id, el resto por convención)
+        mapper.createTypeMap(Product.class, ProductDTO.class)
+                .addMapping(Product::getProductId, ProductDTO::setIdProduct);
+
         return mapper;
     }
 
 }
-
