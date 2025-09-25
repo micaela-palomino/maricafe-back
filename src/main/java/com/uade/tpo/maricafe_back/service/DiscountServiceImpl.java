@@ -26,7 +26,7 @@ public class DiscountServiceImpl implements IDiscountService {
     @Override
     public DiscountDTO createDiscount(Integer productId, double percentage) {
         if (percentage < 0 || percentage > 100) {
-            throw new IllegalArgumentException("discountPercentage debe estar entre 0 y 100");
+            throw new IllegalArgumentException("El porcentaje de descuento debe estar entre 0 y 100");
         }
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("El producto: " + productId + " no fue encontrado"));
