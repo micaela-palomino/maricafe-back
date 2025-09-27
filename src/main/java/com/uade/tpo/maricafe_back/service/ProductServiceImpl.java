@@ -53,13 +53,9 @@ public class ProductServiceImpl implements IProductService {
             dto.setDiscountPercentage(percentage);
             // El precio actual del producto ya es el precio con descuentos en este modelo
             double newPrice = p.getPrice();
-            // Calcular precio viejo (antes del descuento). Evitar división por cero si percentage == 100
-            Double oldPrice = (percentage >= 100) ? null : newPrice / (1 - (percentage / 100.0));
-            dto.setOldPrice(oldPrice);
             dto.setNewPrice(newPrice);
         } else {
             dto.setDiscountPercentage(null);
-            dto.setOldPrice(null);
             dto.setNewPrice(null);
         }
         return dto;

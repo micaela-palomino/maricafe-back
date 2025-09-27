@@ -31,9 +31,6 @@ public class ProductDTO {
     @JsonProperty("discount_percentage")
     private Double discountPercentage; // en %
 
-    @JsonProperty("old_price")
-    private Double oldPrice; // precio antes del descuento
-
     @JsonProperty("new_price")
     private Double newPrice; // precio con el descuento aplicado (generalmente igual a price actual)
 }
