@@ -44,14 +44,6 @@ public class ProductController {
         return productService.findById(id);
     }
 
-    // 3.3 Obtener imágenes del producto por id
-    @GetMapping("/{id}/images")
-    public List<String> getProductImages(@PathVariable Integer id) {
-        return productService.findImagesByProductId(id);
-    }
-
-
-
     //3.4 Obtener productos por cualquiera de sus atributos (title, description, priceMax), teniendo en cuents que tal vez solo pasa uno de sus atributos
     @GetMapping("/attributes")
     public List<ProductDTO> getProductsByAttributes(

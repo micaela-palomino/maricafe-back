@@ -13,7 +13,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -91,20 +90,6 @@ public class ProductServiceImpl implements IProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encuentra producto con id: " + id));
         return toDTO(product);
-    }
-
-    //3.3 buscar imagenes por id de producto
-    @Override
-    public List<String> findImagesByProductId(Integer id) {
-        // Validar que el producto exista Y tenga stock
-        productRepository.findByProductIdAndStockGreaterThan(id, 0)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "El producto con id: " + id + " no fue encontrado o no tiene stock"));
-
-        // Trae List<Image> desde el repo y lo convierte a Base64 (List<String>)
-        return productRepository.findImagesByProductId(id).stream()
-                .map(img -> Base64.getEncoder().encodeToString(img.getData()))
-                .toList();
     }
 
     //3.4 buscar productos por categoría (con stock)

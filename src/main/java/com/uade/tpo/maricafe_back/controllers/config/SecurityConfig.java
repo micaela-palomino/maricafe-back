@@ -62,6 +62,9 @@ public class SecurityConfig {
                         // Descuentos
                         .requestMatchers("/discounts/**").hasAuthority(Role.ADMIN.name())
 
+                        // Imagenes
+                        .requestMatchers("/images").hasAuthority(Role.ADMIN.name())
+
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex

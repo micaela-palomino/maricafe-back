@@ -17,9 +17,6 @@ public interface IProductService {
     // 3.2 obtener producto por id para admin
     ProductDTO findById(Integer id);
 
-    // 3.3 obtener imágenes del producto por id
-    List<String> findImagesByProductId(Integer id);
-
     // 3.4 obtener productos por categoría (con stock)
     List<ProductDTO> findProductsByAttributes(String title, String description, Double priceMax);
 

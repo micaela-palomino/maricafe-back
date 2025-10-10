@@ -1,10 +1,12 @@
 package com.uade.tpo.maricafe_back.service;
 
-import com.uade.tpo.maricafe_back.entity.Image;
+import java.util.List;
 
 public interface ImageService {
-    Long create(Image image);
-    Image viewById(Long id);
+    // 3.3 obtener imágenes del producto por id
+    List<String> findImagesByProductId(Integer id);
+    Long createForProduct(byte[] imageBytes, Integer productId);
+    void deleteById(Long id);
 }
 
 
