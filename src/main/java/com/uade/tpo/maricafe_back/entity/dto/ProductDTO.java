@@ -3,6 +3,8 @@ package com.uade.tpo.maricafe_back.entity.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -33,4 +35,7 @@ public class ProductDTO {
 
     @JsonProperty("new_price")
     private Double newPrice; // precio con el descuento aplicado (generalmente igual a price actual)
+
+    @JsonProperty("attributes")
+    private List<ProductAttributeValueDTO> attributes;
 }

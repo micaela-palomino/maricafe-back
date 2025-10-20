@@ -3,7 +3,10 @@ package com.uade.tpo.maricafe_back.controllers;
 import com.uade.tpo.maricafe_back.entity.dto.ApiResponseDTO;
 import com.uade.tpo.maricafe_back.entity.dto.CreateProductDTO;
 import com.uade.tpo.maricafe_back.entity.dto.ProductDTO;
+import com.uade.tpo.maricafe_back.entity.dto.ProductAttributeDTO;
+import com.uade.tpo.maricafe_back.entity.dto.ProductAttributeValueDTO;
 import com.uade.tpo.maricafe_back.service.IProductService;
+import com.uade.tpo.maricafe_back.service.ProductAttributeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,10 +18,11 @@ import java.util.List;
 @RequestMapping("products")
 public class ProductController {
     private final IProductService productService;
+    private final ProductAttributeService attributeService;
 
-
-    public ProductController(IProductService productService) {
+    public ProductController(IProductService productService, ProductAttributeService attributeService) {
         this.productService = productService;
+        this.attributeService = attributeService;
     }
 
     // 3.1 Listar productos (excluye sin stock)
@@ -92,6 +96,71 @@ public class ProductController {
     public ResponseEntity<ApiResponseDTO<Void>> deleteProduct(@PathVariable Integer id) {
         productService.deleteProduct(id);
         return ResponseEntity.ok(ApiResponseDTO.success("Producto eliminado con éxito"));
+    }
+
+    // Attribute Management Endpoints
+
+    // Get attributes for a category
+    @GetMapping("/attributes/category/{categoryId}")
+    public ResponseEntity<List<ProductAttributeDTO>> getAttributesByCategory(@PathVariable Integer categoryId) {
+        return ResponseEntity.ok(attributeService.getAttributesByCategory(categoryId));
+    }
+
+    // Create new attribute
+    @PostMapping("/attributes")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<ApiResponseDTO<ProductAttributeDTO>> createAttribute(@RequestBody ProductAttributeDTO attributeDTO) {
+        ProductAttributeDTO saved = attributeService.createAttribute(attributeDTO);
+        return ResponseEntity
+                .created(URI.create("/products/attributes/" + saved.getAttributeId()))
+                .body(ApiResponseDTO.success("Atributo creado con éxito", saved));
+    }
+
+    // Get attribute values for a product
+    @GetMapping("/{productId}/attributes")
+    public ResponseEntity<List<ProductAttributeValueDTO>> getProductAttributes(@PathVariable Integer productId) {
+        return ResponseEntity.ok(attributeService.getAttributeValuesByProduct(productId));
+    }
+
+    // Set attribute value for a product
+    @PostMapping("/{productId}/attributes/{attributeId}")
+    public ResponseEntity<ApiResponseDTO<ProductAttributeValueDTO>> setProductAttributeValue(
+            @PathVariable Integer productId,
+            @PathVariable Integer attributeId,
+            @RequestBody String value) {
+        ProductAttributeValueDTO saved = attributeService.setAttributeValue(productId, attributeId, value);
+        return ResponseEntity.ok(ApiResponseDTO.success("Valor de atributo establecido con éxito", saved));
+    }
+
+    // Delete attribute value for a product
+    @DeleteMapping("/{productId}/attributes/{attributeId}")
+    public ResponseEntity<ApiResponseDTO<Void>> deleteProductAttributeValue(
+            @PathVariable Integer productId,
+            @PathVariable Integer attributeId) {
+        attributeService.deleteAttributeValue(productId, attributeId);
+        return ResponseEntity.ok(ApiResponseDTO.success("Valor de atributo eliminado con éxito"));
+    }
+
+    // Get all attributes
+    @GetMapping("/attributes/all")
+    public ResponseEntity<List<ProductAttributeDTO>> getAllAttributes() {
+        return ResponseEntity.ok(attributeService.getAllAttributes());
+    }
+
+    // Get products with attributes for filtering
+    @GetMapping("/with-attributes")
+    public ResponseEntity<List<ProductDTO>> getProductsWithAttributes(
+            @RequestParam(required = false) String sort) {
+        return ResponseEntity.ok(productService.getProductsWithAttributes(sort));
+    }
+
+    // Get products filtered by attributes
+    @GetMapping("/filter-by-attributes")
+    public ResponseEntity<List<ProductDTO>> getProductsFilteredByAttributes(
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false) Integer categoryId,
+            @RequestParam(required = false) String attributeFilters) {
+        return ResponseEntity.ok(productService.getProductsFilteredByAttributes(sort, categoryId, attributeFilters));
     }
 
 }

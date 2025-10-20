@@ -27,6 +27,12 @@ public interface IProductService {
     // 3.8 listar productos (con stock) ordenados por precio (asc/desc)
     List<ProductDTO> listProductsSortedByPrice(String sortParam);
 
+    // Get products with attributes for filtering
+    List<ProductDTO> getProductsWithAttributes(String sortParam);
+
+    // Get products filtered by attributes
+    List<ProductDTO> getProductsFilteredByAttributes(String sortParam, Integer categoryId, String attributeFilters);
+
     // 4.1 crear producto
     ProductDTO createProduct(CreateProductDTO dto);
 

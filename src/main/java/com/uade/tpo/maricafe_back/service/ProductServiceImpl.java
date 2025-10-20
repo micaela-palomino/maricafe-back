@@ -3,18 +3,23 @@ package com.uade.tpo.maricafe_back.service;
 import com.uade.tpo.maricafe_back.entity.Category;
 import com.uade.tpo.maricafe_back.entity.Product;
 import com.uade.tpo.maricafe_back.entity.Discount;
+import com.uade.tpo.maricafe_back.entity.ProductAttributeValue;
 import com.uade.tpo.maricafe_back.entity.dto.CreateProductDTO;
 import com.uade.tpo.maricafe_back.entity.dto.ProductDTO;
+import com.uade.tpo.maricafe_back.entity.dto.ProductAttributeDTO;
+import com.uade.tpo.maricafe_back.entity.dto.ProductAttributeValueDTO;
 import com.uade.tpo.maricafe_back.exceptions.ResourceNotFoundException;
 import com.uade.tpo.maricafe_back.repository.CategoryRepository;
 import com.uade.tpo.maricafe_back.repository.ProductRepository;
 import com.uade.tpo.maricafe_back.repository.DiscountRepository;
+import com.uade.tpo.maricafe_back.repository.ProductAttributeValueRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements IProductService {
@@ -22,12 +27,14 @@ public class ProductServiceImpl implements IProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final DiscountRepository discountRepository;
+    private final ProductAttributeValueRepository attributeValueRepository;
     private final ModelMapper modelMapper;
 
-    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, DiscountRepository discountRepository, ModelMapper modelMapper) {
+    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, DiscountRepository discountRepository, ProductAttributeValueRepository attributeValueRepository, ModelMapper modelMapper) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.discountRepository = discountRepository;
+        this.attributeValueRepository = attributeValueRepository;
         this.modelMapper = modelMapper;
     }
 
@@ -45,6 +52,7 @@ public class ProductServiceImpl implements IProductService {
     //convierte entidades a dto para no exponer directamente a la BD
     private ProductDTO toDTO(Product p) {
         ProductDTO dto = modelMapper.map(p, ProductDTO.class);
+        
         // Enriquecer con información de descuentos si existe un descuento asociado
         Optional<Discount> lastDiscount = discountRepository.findTopByProduct_ProductIdOrderByDiscountIdDesc(p.getProductId());
         if (lastDiscount.isPresent()) {
@@ -57,9 +65,37 @@ public class ProductServiceImpl implements IProductService {
             dto.setDiscountPercentage(null);
             dto.setNewPrice(null);
         }
+        
+        // Load attribute values for the product
+        List<ProductAttributeValueDTO> attributeValues = attributeValueRepository
+                .findByProduct_ProductId(p.getProductId())
+                .stream()
+                .map(this::convertValueToDTO)
+                .collect(Collectors.toList());
+        dto.setAttributes(attributeValues);
+        
         return dto;
     }
 
+    // Convert ProductAttributeValue to DTO
+    private ProductAttributeValueDTO convertValueToDTO(ProductAttributeValue attributeValue) {
+        return ProductAttributeValueDTO.builder()
+                .valueId(attributeValue.getValueId())
+                .productId(attributeValue.getProduct().getProductId())
+                .attribute(ProductAttributeDTO.builder()
+                        .attributeId(attributeValue.getAttribute().getAttributeId())
+                        .name(attributeValue.getAttribute().getName())
+                        .dataType(attributeValue.getAttribute().getDataType())
+                        .description(attributeValue.getAttribute().getDescription())
+                        .required(attributeValue.getAttribute().isRequired())
+                        .selectOptions(attributeValue.getAttribute().getSelectOptions() != null ? 
+                            List.of(attributeValue.getAttribute().getSelectOptions().split(",")) : null)
+                        .categoryId(attributeValue.getAttribute().getCategory() != null ? 
+                            attributeValue.getAttribute().getCategory().getCategoryId() : null)
+                        .build())
+                .value(attributeValue.getValue())
+                .build();
+    }
 
     //3.1 buscar productos con stock y filtros opcionales
     @Override
@@ -108,6 +144,61 @@ public class ProductServiceImpl implements IProductService {
         //no mostrar productos sin stock
         return productRepository.findByStockGreaterThan(0, sort)
                 .stream().map(this::toDTO).toList();
+    }
+
+    @Override
+    public List<ProductDTO> getProductsWithAttributes(String sortParam) {
+        Sort sort = parseSortByPrice(sortParam);
+        // Get products with stock and include their attributes
+        return productRepository.findByStockGreaterThan(0, sort)
+                .stream().map(this::toDTO).toList();
+    }
+
+    @Override
+    public List<ProductDTO> getProductsFilteredByAttributes(String sortParam, Integer categoryId, String attributeFilters) {
+        Sort sort = parseSortByPrice(sortParam);
+        
+        // Get all products with stock
+        List<Product> allProducts = productRepository.findByStockGreaterThan(0, sort);
+        
+        // Filter by category if specified
+        if (categoryId != null) {
+            allProducts = allProducts.stream()
+                    .filter(product -> product.getCategory().getCategoryId().equals(categoryId))
+                    .toList();
+        }
+        
+        // Filter by attributes if specified
+        if (attributeFilters != null && !attributeFilters.trim().isEmpty()) {
+            try {
+                // Parse attribute filters (format: "attributeId1:value1,attributeId2:value2")
+                String[] filterPairs = attributeFilters.split(",");
+                for (String pair : filterPairs) {
+                    String[] parts = pair.split(":");
+                    if (parts.length == 2) {
+                        Integer attributeId = Integer.parseInt(parts[0].trim());
+                        String filterValue = parts[1].trim();
+                        
+                        // Filter products that have this attribute with this value
+                        allProducts = allProducts.stream()
+                                .filter(product -> {
+                                    return attributeValueRepository.findByProduct_ProductId(product.getProductId())
+                                            .stream()
+                                            .anyMatch(attrValue -> 
+                                                attrValue.getAttribute().getAttributeId().equals(attributeId) &&
+                                                attrValue.getValue().equals(filterValue)
+                                            );
+                                })
+                                .toList();
+                    }
+                }
+            } catch (Exception e) {
+                // If parsing fails, return all products
+                System.err.println("Error parsing attribute filters: " + e.getMessage());
+            }
+        }
+        
+        return allProducts.stream().map(this::toDTO).toList();
     }
 
     //3.5 obtener productos por categoría (con stock) y ordenados por precio (asc/desc)
