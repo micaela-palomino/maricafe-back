@@ -66,7 +66,9 @@ public class SecurityConfig {
                         .requestMatchers("/discounts/**").hasAuthority(Role.ADMIN.name())
 
                         // Imagenes
-                        .requestMatchers("/images").hasAuthority(Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/images/**").hasAuthority(Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.DELETE, "/images/**").hasAuthority(Role.ADMIN.name())
 
                         .anyRequest().authenticated()
                 )

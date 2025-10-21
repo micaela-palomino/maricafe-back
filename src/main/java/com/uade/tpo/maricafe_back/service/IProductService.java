@@ -8,24 +8,20 @@ import java.util.List;
 
 public interface IProductService {
 
-    // 3.1 listar productos (con stock) con filtros opcionales
-    List<ProductDTO> findAvailableProducts(String q, Double priceMin, Double priceMax);
+    // 3.1 listar productos con filtros opcionales (role-based: USER sees only with stock, ADMIN sees all)
+    List<ProductDTO> findProducts(String q, Double priceMin, Double priceMax, boolean isAdmin);
 
-    // 3.2 obtener producto por id (si tiene stock)
-    ProductDTO findByIdAndAvailable(Integer id);
+    // 3.2 obtener producto por id (role-based: USER only if available, ADMIN always)
+    ProductDTO findById(Integer id, boolean isAdmin);
 
-    // 3.2 obtener producto por id para admin
-    ProductDTO findById(Integer id);
+    // 3.4 obtener productos por atributos (role-based: USER only with stock, ADMIN sees all)
+    List<ProductDTO> findProductsByAttributes(String title, String description, Double priceMax, boolean isAdmin);
 
-    // 3.4 obtener productos por categoría (con stock)
-    List<ProductDTO> findProductsByAttributes(String title, String description, Double priceMax);
+    // 3.5 productos por categoría (role-based: USER only with stock, ADMIN sees all)
+    List<ProductDTO> getProductsByCategory(Integer categoryId, String sortParam, boolean isAdmin);
 
-    // 3.5 productos por categoría (con stock)
-    List<ProductDTO> getProductsByCategory(Integer categoryId, String sortParam);
-
-
-    // 3.8 listar productos (con stock) ordenados por precio (asc/desc)
-    List<ProductDTO> listProductsSortedByPrice(String sortParam);
+    // 3.8 listar productos ordenados por precio (role-based: USER only with stock, ADMIN sees all)
+    List<ProductDTO> listProductsSortedByPrice(String sortParam, boolean isAdmin);
 
     // Get products with attributes for filtering
     List<ProductDTO> getProductsWithAttributes(String sortParam);

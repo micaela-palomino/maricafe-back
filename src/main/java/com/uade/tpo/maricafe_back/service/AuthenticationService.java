@@ -9,6 +9,7 @@ import com.uade.tpo.maricafe_back.controllers.auth.AuthenticationRequest;
 import com.uade.tpo.maricafe_back.controllers.auth.AuthenticationResponse;
 import com.uade.tpo.maricafe_back.controllers.auth.RegisterRequest;
 import com.uade.tpo.maricafe_back.controllers.config.JwtService;
+import com.uade.tpo.maricafe_back.entity.Role;
 import com.uade.tpo.maricafe_back.entity.User;
 import com.uade.tpo.maricafe_back.exceptions.UserDuplicateException;
 import com.uade.tpo.maricafe_back.repository.UserRepository;
@@ -29,18 +30,23 @@ public class AuthenticationService {
             throw new UserDuplicateException(request.getEmail());
         }
 
+        // Si no se especifica rol, asignar USER por defecto
+        // Solo los admins se crean con rol específico a través del script
+        Role userRole = (request.getRole() != null) ? request.getRole() : Role.USER;
+
         var user = User.builder()
                 .firstName(request.getFirstname())
                 .lastName(request.getLastname())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(request.getRole())
+                .role(userRole)
                 .build();
 
         repository.save(user);
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
+                .user(user)
                 .build();
     }
 
@@ -55,6 +61,7 @@ public class AuthenticationService {
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
+                .user(user)
                 .build();
     }
 }

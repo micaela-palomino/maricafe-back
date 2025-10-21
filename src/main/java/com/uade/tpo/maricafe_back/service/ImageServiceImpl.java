@@ -19,10 +19,10 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public List<String> findImagesByProductId(Integer productId) {
-        // Validar que el producto exista Y tenga stock
-        productRepository.findByProductIdAndStockGreaterThan(productId, 0)
+        // Validar que el producto exista (sin restricción de stock para permitir admin ver productos sin stock)
+        productRepository.findById(productId)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        "El producto con id: " + productId + " no fue encontrado o no tiene stock"));
+                        "El producto con id: " + productId + " no fue encontrado"));
 
         // Trae List<Image> desde el repo y lo convierte a Base64 (List<String>)
         return productRepository.findImagesByProductId(productId).stream()

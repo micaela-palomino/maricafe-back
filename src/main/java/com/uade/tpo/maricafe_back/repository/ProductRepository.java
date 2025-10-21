@@ -26,6 +26,17 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                                         @Param("priceMin") Double priceMin,
                                         @Param("priceMax") Double priceMax);
 
+    // 1-b) Buscar TODOS los productos con filtros opcionales (para ADMIN)
+    @Query("""
+           SELECT p FROM Product p
+           WHERE (:q IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :q, '%')))
+             AND (:priceMin IS NULL OR p.price >= :priceMin)
+             AND (:priceMax IS NULL OR p.price <= :priceMax)
+           """)
+    List<Product> findAllProducts(@Param("q") String q,
+                                  @Param("priceMin") Double priceMin,
+                                  @Param("priceMax") Double priceMax);
+
     // 2) Buscar producto por id y stock mayor a 0 (el campo es productId)
     Optional<Product> findByProductIdAndStockGreaterThan(Integer productId, int stockIsGreaterThan);
 
@@ -47,8 +58,22 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                                    @Param("description") String description,
                                    @Param("priceMax") Double priceMax);
 
+    // 4-b) Buscar TODOS los productos por atributos (para ADMIN)
+    @Query("""
+           SELECT p FROM Product p
+           WHERE (:title IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :title, '%')))
+             AND (:description IS NULL OR LOWER(p.description) LIKE LOWER(CONCAT('%', :description, '%')))
+             AND (:priceMax IS NULL OR p.price <= :priceMax)
+           """)
+    List<Product> findAllByAttributes(@Param("title") String title,
+                                      @Param("description") String description,
+                                      @Param("priceMax") Double priceMax);
+
     // 5) Por categoryId y con stock, ordenado
     List<Product> findByCategory_CategoryIdAndStockGreaterThan(Integer categoryId, int stock, Sort sort);
+
+    // 5-b) Por categoryId (TODOS los productos, para ADMIN)
+    List<Product> findByCategory_CategoryId(Integer categoryId, Sort sort);
 
     // 6) Stock > X con orden
     List<Product> findByStockGreaterThan(int stock, Sort sort);

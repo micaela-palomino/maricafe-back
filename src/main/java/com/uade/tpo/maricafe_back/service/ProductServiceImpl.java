@@ -97,53 +97,74 @@ public class ProductServiceImpl implements IProductService {
                 .build();
     }
 
-    //3.1 buscar productos con stock y filtros opcionales
+    //3.1 buscar productos con filtros opcionales (role-based)
     @Override
-    public List<ProductDTO> findAvailableProducts(String q, Double priceMin, Double priceMax) {
-
+    public List<ProductDTO> findProducts(String q, Double priceMin, Double priceMax, boolean isAdmin) {
         if (priceMin != null && priceMax != null && priceMin > priceMax) {
             throw new IllegalArgumentException("priceMin no puede ser mayor a priceMax");
         }
         if (q != null && !q.isBlank()) {
             q = q.toLowerCase();
         }
-        return productRepository.findAvailableProducts(q, priceMin, priceMax)
-                .stream()
-                .map(this::toDTO)
-                .toList();
+        
+        List<Product> products;
+        if (isAdmin) {
+            // Admin sees all products
+            products = productRepository.findAllProducts(q, priceMin, priceMax);
+        } else {
+            // User sees only products with stock
+            products = productRepository.findAvailableProducts(q, priceMin, priceMax);
+        }
+        
+        return products.stream().map(this::toDTO).toList();
     }
 
-    //3.2 buscar producto por id y que tenga stock
+    //3.2 obtener producto por id (role-based)
     @Override
-    public ProductDTO findByIdAndAvailable(Integer id) {
-        Product product = productRepository.findByProductIdAndStockGreaterThan(id, 0)
-                .orElseThrow(() -> new IllegalArgumentException("El producto con id: " + id + " no fue encontrado o no tiene stock"));
-        return toDTO(product);
+    public ProductDTO findById(Integer id, boolean isAdmin) {
+        if (isAdmin) {
+            // Admin can see any product
+            Product product = productRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("No se encuentra producto con id: " + id));
+            return toDTO(product);
+        } else {
+            // User can only see products with stock
+            Product product = productRepository.findByProductIdAndStockGreaterThan(id, 0)
+                    .orElseThrow(() -> new IllegalArgumentException("El producto con id: " + id + " no fue encontrado o no tiene stock"));
+            return toDTO(product);
+        }
     }
 
+    //3.4 buscar productos por atributos (role-based)
     @Override
-    public ProductDTO findById(Integer id) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No se encuentra producto con id: " + id));
-        return toDTO(product);
+    public List<ProductDTO> findProductsByAttributes(String title, String description, Double priceMax, boolean isAdmin) {
+        List<Product> products;
+        if (isAdmin) {
+            // Admin sees all products
+            products = productRepository.findAllByAttributes(title, description, priceMax);
+        } else {
+            // User sees only products with stock
+            products = productRepository.findByAttributes(title, description, priceMax);
+        }
+        
+        return products.stream().map(this::toDTO).toList();
     }
 
-    //3.4 buscar productos por categoría (con stock)
+    //3.8 listar productos ordenados por precio (role-based)
     @Override
-    public List<ProductDTO> findProductsByAttributes(String title, String description, Double priceMax) {
-        return productRepository.findByAttributes(title, description, priceMax)
-                .stream()
-                .map(this::toDTO)
-                .toList();
-    }
-
-    //3.8 listar productos (con stock) ordenados por precio (asc/desc)
-    @Override
-    public List<ProductDTO> listProductsSortedByPrice(String sortParam) {
+    public List<ProductDTO> listProductsSortedByPrice(String sortParam, boolean isAdmin) {
         Sort sort = parseSortByPrice(sortParam);
-        //no mostrar productos sin stock
-        return productRepository.findByStockGreaterThan(0, sort)
-                .stream().map(this::toDTO).toList();
+        
+        List<Product> products;
+        if (isAdmin) {
+            // Admin sees all products
+            products = productRepository.findAll(sort);
+        } else {
+            // User sees only products with stock
+            products = productRepository.findByStockGreaterThan(0, sort);
+        }
+        
+        return products.stream().map(this::toDTO).toList();
     }
 
     @Override
@@ -201,17 +222,25 @@ public class ProductServiceImpl implements IProductService {
         return allProducts.stream().map(this::toDTO).toList();
     }
 
-    //3.5 obtener productos por categoría (con stock) y ordenados por precio (asc/desc)
+    //3.5 obtener productos por categoría (role-based)
     @Override
-    public List<ProductDTO> getProductsByCategory(Integer categoryId, String sortParam) {
+    public List<ProductDTO> getProductsByCategory(Integer categoryId, String sortParam, boolean isAdmin) {
         //validar categoría (opcional si queremos 404)
         categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new IllegalArgumentException("La categoria: " + categoryId + " no fue encontrada"));
 
         Sort sort = parseSortByPrice(sortParam);
-        return productRepository
-                .findByCategory_CategoryIdAndStockGreaterThan(categoryId, 0, sort)
-                .stream().map(this::toDTO).toList();
+        
+        List<Product> products;
+        if (isAdmin) {
+            // Admin sees all products in category
+            products = productRepository.findByCategory_CategoryId(categoryId, sort);
+        } else {
+            // User sees only products with stock in category
+            products = productRepository.findByCategory_CategoryIdAndStockGreaterThan(categoryId, 0, sort);
+        }
+        
+        return products.stream().map(this::toDTO).toList();
     }
 
     // 4.1 crear producto (solo ADMIN)

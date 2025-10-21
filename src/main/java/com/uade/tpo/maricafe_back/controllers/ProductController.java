@@ -9,6 +9,8 @@ import com.uade.tpo.maricafe_back.service.IProductService;
 import com.uade.tpo.maricafe_back.service.ProductAttributeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -25,51 +27,53 @@ public class ProductController {
         this.attributeService = attributeService;
     }
 
-    // 3.1 Listar productos (excluye sin stock)
+    // Helper method to check if current user is admin
+    private boolean isCurrentUserAdmin() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null && 
+               authentication.getAuthorities().stream()
+                       .anyMatch(auth -> auth.getAuthority().equals("ADMIN"));
+    }
+
+    // 3.1 Listar productos (role-based: USER sees only with stock, ADMIN sees all)
     @GetMapping("/filterPrices")
     public List<ProductDTO> getAllProductsFiltered(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) Double priceMin,
             @RequestParam(required = false) Double priceMax
     ) {
-        return productService.findAvailableProducts(title, priceMin, priceMax);
+        return productService.findProducts(title, priceMin, priceMax, isCurrentUserAdmin());
     }
 
-    // 3.2 Obtener producto por id
+    // 3.2 Obtener producto por id (role-based: USER only if available, ADMIN always)
     @GetMapping("/{id}")
     public ProductDTO getProductById(@PathVariable Integer id) {
-        return productService.findByIdAndAvailable(id);
+        return productService.findById(id, isCurrentUserAdmin());
     }
 
-    // 3.2 Obtener producto por id para admins
-    @GetMapping("/admin/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public ProductDTO getProductByIdAdmin(@PathVariable Integer id) {
-        return productService.findById(id);
-    }
 
-    //3.4 Obtener productos por cualquiera de sus atributos (title, description, priceMax), teniendo en cuents que tal vez solo pasa uno de sus atributos
+    //3.4 Obtener productos por cualquiera de sus atributos (role-based: USER only with stock, ADMIN sees all)
     @GetMapping("/attributes")
     public List<ProductDTO> getProductsByAttributes(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String description,
             @RequestParam(required = false) Double priceMax
     ) {
-        return productService.findProductsByAttributes(title, description, priceMax);
+        return productService.findProductsByAttributes(title, description, priceMax, isCurrentUserAdmin());
     }
 
-    //EP1 TOMI: 3.5 GET /categories/{id}/products?sort=price,asc|desc
+    //EP1 TOMI: 3.5 GET /categories/{id}/products?sort=price,asc|desc (role-based: USER only with stock, ADMIN sees all)
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<ProductDTO>> getProductsByCategory(
             @PathVariable Integer categoryId,
             @RequestParam(required = false) String sort) {
-        return ResponseEntity.ok(productService.getProductsByCategory(categoryId, sort));
+        return ResponseEntity.ok(productService.getProductsByCategory(categoryId, sort, isCurrentUserAdmin()));
     }
 
-    //EP4 TOMI: 3.8 GET /products?sort=price,asc|desc (la query que me pusieron en trello)
+    //EP4 TOMI: 3.8 GET /products?sort=price,asc|desc (role-based: USER only with stock, ADMIN sees all)
     @GetMapping
     public ResponseEntity<List<ProductDTO>> listProducts(@RequestParam(required = false) String sort) {
-        return ResponseEntity.ok(productService.listProductsSortedByPrice(sort));
+        return ResponseEntity.ok(productService.listProductsSortedByPrice(sort, isCurrentUserAdmin()));
     }
 
     // 4.1 POST /products - Crear producto (solo ADMIN)
