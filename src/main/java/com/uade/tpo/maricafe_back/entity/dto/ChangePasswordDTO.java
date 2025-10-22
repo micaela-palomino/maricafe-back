@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ChangePasswordDTO {
 
+    @JsonProperty("current_password")
+    private String currentPassword;
+
     @JsonProperty("new_password")
     private String newPassword;
 }

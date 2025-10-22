@@ -24,4 +24,7 @@ public class OrderItem {
     private Product product;
 
     private int quantity;
+    
+    @Column(name = "unit_price")
+    private double unitPrice;
 }

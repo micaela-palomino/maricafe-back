@@ -51,9 +51,10 @@ public class SecurityConfig {
                         // Ordenes
                         .requestMatchers(HttpMethod.POST, "/orders").hasAuthority(Role.USER.name())
                         .requestMatchers(HttpMethod.GET, "/orders/user").hasAuthority(Role.USER.name())
+                        .requestMatchers(HttpMethod.GET, "/orders/user/{id}").hasAuthority(Role.USER.name())
                         .requestMatchers(HttpMethod.GET, "/orders/{id}").hasAuthority(Role.ADMIN.name())
-                        .requestMatchers(HttpMethod.GET, "/orders/active").hasAuthority(Role.ADMIN.name())
-                        .requestMatchers(HttpMethod.GET, "/orders/inactive").hasAuthority(Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.GET, "/orders/admin/active").hasAuthority(Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.GET, "/orders/admin/inactive").hasAuthority(Role.ADMIN.name())
                         .requestMatchers(HttpMethod.DELETE, "/orders/{id}").hasAuthority(Role.ADMIN.name())
 
                         // Usuarios

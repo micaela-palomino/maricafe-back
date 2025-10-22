@@ -21,5 +21,5 @@ public interface IUserService {
     
     Optional<UserResponseDTO> getUserByEmail(String email);
     
-    void changePassword(Integer id, String newPassword);
+    void changePassword(Integer id, String currentPassword, String newPassword);
 }

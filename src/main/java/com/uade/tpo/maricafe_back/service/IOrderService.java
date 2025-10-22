@@ -9,6 +9,7 @@ public interface IOrderService {
     OrderDTO create(CreateOrderDTO order);
     List<OrderDTO> findMine();
     OrderDTO findById(Integer id);
+    OrderDTO findMyOrderById(Integer id);
     void deactivateOrder(Integer id);
     
     // Métodos para administradores

@@ -15,4 +15,6 @@ public class OrderItemDTO {
     private Integer productId;
     @JsonProperty("quantity")
     private int quantity;
+    @JsonProperty("unit_price")
+    private Double unitPrice;
 }

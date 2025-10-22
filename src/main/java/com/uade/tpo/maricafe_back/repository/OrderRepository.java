@@ -15,6 +15,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     // Métodos para filtrar solo órdenes activas
     List<Order> findByUserAndActiveTrue(User user);
     Optional<Order> findByOrderIdAndActiveTrue(Integer orderId);
+    Optional<Order> findByOrderIdAndUserAndActiveTrue(Integer orderId, User user);
     List<Order> findByActiveTrue();
     
     // Métodos para administradores

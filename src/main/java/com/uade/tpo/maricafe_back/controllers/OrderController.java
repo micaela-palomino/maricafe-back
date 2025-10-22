@@ -40,6 +40,13 @@ public class OrderController {
         return ordenService.findById(id);
     }
 
+    // 4.4 [GET] "/orders/user/{id}" -> Obtener una orden del usuario autenticado
+    @GetMapping("/user/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public OrderDTO getMyOrder(@PathVariable Integer id) {
+        return ordenService.findMyOrderById(id);
+    }
+
     @DeleteMapping("/{id}")
     public ApiResponseDTO<Void> delete(@PathVariable Integer id) {
         ordenService.deactivateOrder(id);

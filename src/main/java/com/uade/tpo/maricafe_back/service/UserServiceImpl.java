@@ -86,9 +86,20 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     @Transactional
-    public void changePassword(Integer id, String newPassword) {
+    public void changePassword(Integer id, String currentPassword, String newPassword) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("El usuario con el id: "  + id + " no fue encontrado"));
+        
+        // Verify current password
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new IllegalArgumentException("La contraseña actual es incorrecta");
+        }
+        
+        // Check if new password is different from current password
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            throw new IllegalArgumentException("La nueva contraseña debe ser diferente a la contraseña actual");
+        }
+        
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }

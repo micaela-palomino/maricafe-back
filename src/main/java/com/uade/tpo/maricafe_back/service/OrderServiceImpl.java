@@ -54,6 +54,7 @@ public class OrderServiceImpl implements IOrderService {
                 .map(orderItem -> ItemDTO.builder()
                         .name(orderItem.getProduct().getTitle())
                         .quantity(orderItem.getQuantity())
+                        .unitPrice(orderItem.getUnitPrice())
                         .build())
                 .toList();
         
@@ -102,21 +103,26 @@ public class OrderServiceImpl implements IOrderService {
             product.setStock(product.getStock() - orderItemDto.getQuantity());
             productRepository.save(product);
 
+            // Usar el precio unitario proporcionado en la request, o el precio del producto si no se proporciona
+            double unitPrice = orderItemDto.getUnitPrice() != null ? orderItemDto.getUnitPrice() : product.getPrice();
+
             // Crear OrderItem
             OrderItem orderItem = OrderItem.builder()
                     .order(created)
                     .product(product)
                     .quantity(orderItemDto.getQuantity())
+                    .unitPrice(unitPrice)
                     .build();
             orderItemRepository.save(orderItem);
 
-            // Sumar al precio total
-            totalPrice += product.getPrice() * orderItemDto.getQuantity();
+            // Sumar al precio total usando el precio unitario
+            totalPrice += unitPrice * orderItemDto.getQuantity();
             
             // Crear ItemDTO para la respuesta
             ItemDTO itemDTO = ItemDTO.builder()
                     .name(product.getTitle())
                     .quantity(orderItemDto.getQuantity())
+                    .unitPrice(unitPrice)
                     .build();
             itemDTOs.add(itemDTO);
         }
@@ -152,6 +158,18 @@ public class OrderServiceImpl implements IOrderService {
         // Solo admins pueden acceder a cualquier orden activa por ID
         Order order = orderRepository.findByOrderIdAndActiveTrue(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No existe la orden activa con id: " + id));
+        
+        return convertOrderToDTO(order);
+    }
+
+    @Override
+    public OrderDTO findMyOrderById(Integer id) {
+        // Obtener el usuario autenticado
+        User authenticatedUser = getAuthenticatedUser();
+        
+        // Buscar la orden del usuario autenticado
+        Order order = orderRepository.findByOrderIdAndUserAndActiveTrue(id, authenticatedUser)
+                .orElseThrow(() -> new ResourceNotFoundException("No existe la orden activa con id: " + id + " para el usuario actual"));
         
         return convertOrderToDTO(order);
     }
