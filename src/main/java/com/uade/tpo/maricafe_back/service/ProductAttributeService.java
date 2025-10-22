@@ -95,7 +95,9 @@ public class ProductAttributeService {
                 .description(attribute.getDescription())
                 .required(attribute.isRequired())
                 .selectOptions(attribute.getSelectOptions() != null ? 
-                    List.of(attribute.getSelectOptions().split(",")) : null)
+                    List.of(attribute.getSelectOptions().split(",")).stream()
+                        .map(String::trim)
+                        .collect(Collectors.toList()) : null)
                 .categoryId(attribute.getCategory() != null ? attribute.getCategory().getCategoryId() : null)
                 .build();
     }
