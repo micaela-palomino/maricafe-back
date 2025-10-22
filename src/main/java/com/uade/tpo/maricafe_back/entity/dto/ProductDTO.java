@@ -30,6 +30,9 @@ public class ProductDTO {
     private int stock;
 
     // Información de descuentos (solo cuando hay descuentos asociado)
+    @JsonProperty("discount_id")
+    private Integer discountId; // ID del descuento para poder editarlo/eliminarlo
+    
     @JsonProperty("discount_percentage")
     private Double discountPercentage; // en %
 

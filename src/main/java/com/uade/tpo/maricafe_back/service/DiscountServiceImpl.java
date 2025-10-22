@@ -31,6 +31,12 @@ public class DiscountServiceImpl implements IDiscountService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("El producto: " + productId + " no fue encontrado"));
 
+        // Verificar si ya existe un descuento para este producto
+        discountRepository.findTopByProduct_ProductIdOrderByDiscountIdDesc(productId)
+                .ifPresent(existingDiscount -> {
+                    throw new IllegalArgumentException("El producto ya tiene un descuento. Elimínalo o edítalo.");
+                });
+
         Discount discount = Discount.builder()
                 .product(product)
                 .discountPercentage(percentage)
@@ -38,9 +44,8 @@ public class DiscountServiceImpl implements IDiscountService {
 
         discount = discountRepository.save(discount);
 
-        double precioFinal = product.getPrice() * (1 - (percentage / 100));
-        product.setPrice(precioFinal);
-        productRepository.save(product);
+        // NO modificar el precio del producto en la BD
+        // El precio con descuento se calcula en el DTO
 
         return modelMapper.map(discount, DiscountDTO.class);
     }
@@ -54,25 +59,22 @@ public class DiscountServiceImpl implements IDiscountService {
         Discount discount = discountRepository.findById(discountId)
                 .orElseThrow(() -> new IllegalArgumentException("El descuento: " + discountId + " no fue encontrado"));
 
-        // Calcular nuevo precio en base al nuevo descuento obteniendo el precio original
-        Product product = discount.getProduct();
-        double precioAntiguo = product.getPrice() / (1 - discount.getDiscountPercentage() / 100);
-        double precioFinal = precioAntiguo * (1 - (percentage / 100));
-        product.setPrice(precioFinal);
-        productRepository.save(product);
-
+        // Solo actualizar el porcentaje del descuento
+        // NO modificar el precio del producto en la BD
         discount.setDiscountPercentage(percentage);
         discount = discountRepository.save(discount);
+        
         return modelMapper.map(discount, DiscountDTO.class);
     }
 
 
     @Override
     public void deleteDiscount(Integer discountId) {
+        // Simplemente eliminar el descuento
+        // NO modificar el precio del producto ya que nunca lo modificamos
         if (discountRepository.existsById(discountId)) {
             discountRepository.deleteById(discountId);
         }
-        // Si no existe, no hace nada
     }
 
 }

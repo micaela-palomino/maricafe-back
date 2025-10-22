@@ -4,6 +4,8 @@ import com.uade.tpo.maricafe_back.entity.User;
 import com.uade.tpo.maricafe_back.entity.dto.UserResponseDTO;
 import com.uade.tpo.maricafe_back.entity.Product;
 import com.uade.tpo.maricafe_back.entity.dto.ProductDTO;
+import com.uade.tpo.maricafe_back.entity.Discount;
+import com.uade.tpo.maricafe_back.entity.dto.DiscountDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +29,10 @@ public class ModelMapperConfig {
         // Configurar mapping de Product a ProductDTO (solo id, el resto por convención)
         mapper.createTypeMap(Product.class, ProductDTO.class)
                 .addMapping(Product::getProductId, ProductDTO::setIdProduct);
+
+        // Configurar mapping de Discount a DiscountDTO
+        mapper.createTypeMap(Discount.class, DiscountDTO.class)
+                .addMapping(src -> src.getProduct().getProductId(), DiscountDTO::setProductId);
 
         return mapper;
     }

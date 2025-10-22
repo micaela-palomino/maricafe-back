@@ -56,12 +56,15 @@ public class ProductServiceImpl implements IProductService {
         // Enriquecer con información de descuentos si existe un descuento asociado
         Optional<Discount> lastDiscount = discountRepository.findTopByProduct_ProductIdOrderByDiscountIdDesc(p.getProductId());
         if (lastDiscount.isPresent()) {
-            double percentage = lastDiscount.get().getDiscountPercentage();
-            dto.setDiscountPercentage(percentage);
-            // El precio actual del producto ya es el precio con descuentos en este modelo
-            double newPrice = p.getPrice();
-            dto.setNewPrice(newPrice);
+            Discount discount = lastDiscount.get();
+            dto.setDiscountId(discount.getDiscountId());
+            dto.setDiscountPercentage(discount.getDiscountPercentage());
+            // Calcular el precio con descuento (el precio en BD es el precio original)
+            double originalPrice = p.getPrice();
+            double discountedPrice = originalPrice * (1 - discount.getDiscountPercentage() / 100);
+            dto.setNewPrice(discountedPrice);
         } else {
+            dto.setDiscountId(null);
             dto.setDiscountPercentage(null);
             dto.setNewPrice(null);
         }
