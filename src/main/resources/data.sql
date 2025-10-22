@@ -1,14 +1,14 @@
 -- Sample data for Maricafe database
 -- This file will be executed when the application starts
 
--- Insert categories
-INSERT INTO categories (name) VALUES 
+-- Insert categories (ignore duplicates)
+INSERT IGNORE INTO categories (name) VALUES 
 ('tortas'),
 ('tazas'),
 ('catering');
 
--- Insert products
-INSERT INTO products (title, description, price, category_id, stock) VALUES 
+-- Insert products (ignore duplicates)
+INSERT IGNORE INTO products (title, description, price, category_id, stock) VALUES 
 -- Tortas
 ('Rainbow Cake Clásica', 'Torta de capas del arcoíris con crema de vainilla. Perfecta para celebraciones especiales.', 65000, 1, 10),
 ('Rainbow Cake Vegana', 'Versión 100% vegana de nuestra famosa torta arcoíris. Mismos colores vibrantes, sabor increíble sin ingredientes de origen animal.', 75000, 1, 8),
@@ -48,8 +48,8 @@ INSERT INTO products (title, description, price, category_id, stock) VALUES
 ('Catering Corporativo Inclusivo', 'Catering especializado para empresas con políticas de diversidad e inclusión.', 320000, 3, 0),
 ('Catering Wedding Pride', 'Catering especializado para bodas con temática Pride. Servicio completo de lujo.', 380000, 3, 0);
 
--- Insert product attributes
-INSERT INTO product_attributes (name, data_type, description, required, select_options, category_id) VALUES 
+-- Insert product attributes (ignore duplicates)
+INSERT IGNORE INTO product_attributes (name, data_type, description, required, select_options, category_id) VALUES 
 -- Attributes for Tortas (category_id = 1)
 ('Vegano', 'boolean', 'Indica si la torta es vegana (sin ingredientes de origen animal)', false, null, 1),
 ('Sin TACC', 'boolean', 'Indica si la torta es libre de gluten', false, null, 1),
@@ -75,7 +75,7 @@ INSERT INTO product_attributes (name, data_type, description, required, select_o
 -- Tazas attributes: 6=Material, 7=Capacidad, 8=Personalizable, 9=Diseño  
 -- Catering attributes: 10=Número de Personas, 11=Tipo de Evento, 12=Incluye Decoración, 13=Opciones Dietéticas
 
-INSERT INTO product_attribute_values (product_id, attribute_id, value) VALUES 
+INSERT IGNORE INTO product_attribute_values (product_id, attribute_id, value) VALUES 
 -- Rainbow Cake Clásica (product_id = 1)
 (1, 1, 'false'), -- No es vegana
 (1, 2, 'false'), -- No es sin TACC
