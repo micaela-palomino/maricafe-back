@@ -241,3 +241,24 @@ INSERT IGNORE INTO product_attribute_values (product_id, attribute_id, value) VA
 (26, 11, 'Boda'), -- Tipo boda
 (26, 12, 'true'), -- Incluye decoración
 (26, 13, 'Mixto'); -- Opciones mixtas
+
+-- Insert sample discounts (ignore duplicates)
+INSERT IGNORE INTO discounts (producto_id, discount_percentage) VALUES 
+-- Discounts for popular tortas
+(1, 15.0), -- Rainbow Cake Clásica - 15% off
+(2, 20.0), -- Rainbow Cake Vegana - 20% off (promoting vegan options)
+(3, 10.0), -- Rainbow Cake Sin TACC - 10% off
+(4, 25.0), -- Carrot Cake Artesanal - 25% off (special promotion)
+(5, 18.0), -- Torta Red Velvet Pride - 18% off
+
+-- Discounts for tazas
+(7, 12.0), -- Taza Pride "Love is Love" - 12% off
+(8, 15.0), -- Taza Arcoíris Personalizada - 15% off
+(9, 30.0), -- Set de 4 Tazas Diversidad - 30% off (bulk discount)
+(10, 10.0), -- Taza "Be Yourself" - 10% off
+
+-- Discounts for catering services
+(13, 20.0), -- Catering Arcoíris - 20 personas - 20% off
+(14, 25.0), -- Catering Vegano - 15 personas - 25% off (promoting vegan catering)
+(16, 15.0), -- Catering Pride - 25 personas - 15% off
+(17, 35.0); -- Catering Personalizado - 35% off (flexible pricing promotion)
