@@ -21,5 +21,8 @@ public class Image {
     @JoinColumn(name = "product_id") // FK hacia Product.productId
     private Product product;
 
+    @Column(name = "image_order", nullable = false)
+    @Builder.Default
+    private Integer imageOrder = 0; // 0 = main image, 1+ = additional images
 
 }

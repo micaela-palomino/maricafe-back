@@ -1,6 +1,5 @@
 package com.uade.tpo.maricafe_back.controllers;
 
-import com.uade.tpo.maricafe_back.entity.Image;
 import com.uade.tpo.maricafe_back.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +32,33 @@ public class ImagesController {
         byte[] bytes = file.getBytes();
         Long createdId = imageService.createForProduct(bytes, productId);
         return ResponseEntity.ok("created:" + createdId);
+    }
+
+    @PostMapping(value = "/multiple", consumes = {"multipart/form-data"})
+    public ResponseEntity<String> addMultipleImagesPost(@RequestParam("files") MultipartFile[] files,
+                                                       @RequestParam("productId") Integer productId) throws Exception {
+        if (files == null || files.length == 0) {
+            return ResponseEntity.badRequest().body("No se proporcionaron archivos");
+        }
+        
+        if (files.length > 10) {
+            return ResponseEntity.badRequest().body("Máximo 10 imágenes permitidas");
+        }
+        
+        StringBuilder response = new StringBuilder("created:");
+        for (int i = 0; i < files.length; i++) {
+            MultipartFile file = files[i];
+            if (file.isEmpty()) {
+                continue;
+            }
+            
+            byte[] bytes = file.getBytes();
+            Long createdId = imageService.createForProduct(bytes, productId, i);
+            if (i > 0) response.append(",");
+            response.append(createdId);
+        }
+        
+        return ResponseEntity.ok(response.toString());
     }
 
     @DeleteMapping("/{imageId}")

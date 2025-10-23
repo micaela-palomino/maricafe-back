@@ -24,20 +24,27 @@ public class ImageServiceImpl implements ImageService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "El producto con id: " + productId + " no fue encontrado"));
 
-        // Trae List<Image> desde el repo y lo convierte a Base64 (List<String>)
+        // Trae List<Image> desde el repo ordenadas por imageOrder y lo convierte a Base64 (List<String>)
         return productRepository.findImagesByProductId(productId).stream()
+                .sorted((img1, img2) -> Integer.compare(img1.getImageOrder(), img2.getImageOrder()))
                 .map(img -> Base64.getEncoder().encodeToString(img.getData()))
                 .toList();
     }
 
     @Override
     public Long createForProduct(byte[] imageBytes, Integer productId) {
+        return createForProduct(imageBytes, productId, 0); // Default to main image (order 0)
+    }
+
+    @Override
+    public Long createForProduct(byte[] imageBytes, Integer productId, Integer imageOrder) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new EntityNotFoundException("Producto " + productId + " no encontrado"));
 
         Image image = Image.builder()
                 .data(imageBytes)
                 .product(product)
+                .imageOrder(imageOrder)
                 .build();
         return imageRepository.save(image).getId();
     }
