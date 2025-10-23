@@ -80,4 +80,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     // 7) **Corregido**: si querías chequear existencia, debe ser 'existsBy...'
     boolean existsByProductId(Integer productId);
+
+    // 8) Existe al menos un producto para una categoría dada
+    boolean existsByCategory_CategoryId(Integer categoryId);
 }
