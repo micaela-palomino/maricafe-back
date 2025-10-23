@@ -3,7 +3,7 @@ package com.uade.tpo.maricafe_back.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -18,7 +18,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer orderId;
 
-    private LocalDate orderDate;
+    private LocalDateTime orderDate;
     private double totalPrice;
     
     @Column(name = "active", nullable = false)

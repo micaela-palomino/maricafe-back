@@ -19,7 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,7 +82,7 @@ public class OrderServiceImpl implements IOrderService {
 
         // Crear la orden primero
         Order order = Order.builder()
-                .orderDate(LocalDate.now())
+                .orderDate(LocalDateTime.now())
                 .totalPrice(0.0) // Se calculara después
                 .user(authenticatedUser)
                 .build();
