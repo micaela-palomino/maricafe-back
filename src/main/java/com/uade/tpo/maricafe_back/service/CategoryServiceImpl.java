@@ -1,12 +1,12 @@
 package com.uade.tpo.maricafe_back.service;
 
-
 import com.uade.tpo.maricafe_back.entity.Category;
 import com.uade.tpo.maricafe_back.entity.dto.CategoryDTO;
 import com.uade.tpo.maricafe_back.entity.dto.CreateCategoryDTO;
 import com.uade.tpo.maricafe_back.exceptions.CategoryDuplicateException;
 import com.uade.tpo.maricafe_back.exceptions.ResourceNotFoundException;
 import com.uade.tpo.maricafe_back.repository.CategoryRepository;
+import com.uade.tpo.maricafe_back.repository.ProductRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,12 +18,13 @@ import java.util.Optional;
 @Service
 public class CategoryServiceImpl implements ICategoryService {
 
-
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
     private final ModelMapper modelMapper;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository, ModelMapper modelMapper) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository, ProductRepository productRepository, ModelMapper modelMapper) {
         this.categoryRepository = categoryRepository;
+        this.productRepository = productRepository;
         this.modelMapper = modelMapper;
     }
 
@@ -42,6 +43,9 @@ public class CategoryServiceImpl implements ICategoryService {
     @Override
     @Transactional
     public CategoryDTO createCategory(CreateCategoryDTO dto) {
+        if (dto.getName() != null && dto.getName().length() > 30) {
+            throw new IllegalArgumentException("El nombre de la categoría no puede superar los 30 caracteres");
+        }
         boolean exists = categoryRepository.existsByName(dto.getName());
         if (exists) {
             throw new CategoryDuplicateException(dto.getName());
@@ -58,6 +62,10 @@ public class CategoryServiceImpl implements ICategoryService {
         if (!categoryRepository.existsById(id)) {
             throw new ResourceNotFoundException("Categoría con id: " + id + " no encontrada");
         }
+        boolean hasProducts = productRepository.existsByCategory_CategoryId(id);
+        if (hasProducts) {
+            throw new IllegalStateException("No se puede eliminar una categoria con Producto");
+        }
         categoryRepository.deleteById(id);
     }
 
@@ -71,6 +79,9 @@ public class CategoryServiceImpl implements ICategoryService {
         boolean exists = categoryRepository.existsByName(dto.getName());
         if (exists && !category.getName().equals(dto.getName())) {
             throw new CategoryDuplicateException(dto.getName());
+        }
+        if (dto.getName() != null && dto.getName().length() > 30) {
+            throw new IllegalArgumentException("El nombre de la categoría no puede superar los 30 caracteres");
         }
 
         category.setName(dto.getName());
