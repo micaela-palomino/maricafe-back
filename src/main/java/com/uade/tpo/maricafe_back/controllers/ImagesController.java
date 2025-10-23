@@ -22,6 +22,12 @@ public class ImagesController {
         return ResponseEntity.ok(imageService.findImagesByProductId(productId));
     }
 
+    // 3.4 Obtener imágenes del producto con IDs
+    @GetMapping("/{productId}/with-ids")
+    public ResponseEntity<List<ImageResponse>> getProductImagesWithIds(@PathVariable Integer productId) {
+        return ResponseEntity.ok(imageService.findImagesWithIdsByProductId(productId));
+    }
+
     @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<String> addImagePost(@RequestParam("file") MultipartFile file,
                                                @RequestParam("productId") Integer productId) throws Exception {
