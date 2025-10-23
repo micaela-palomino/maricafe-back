@@ -1,5 +1,6 @@
 package com.uade.tpo.maricafe_back.service;
 
+import com.uade.tpo.maricafe_back.controllers.ImageResponse;
 import com.uade.tpo.maricafe_back.entity.Image;
 import com.uade.tpo.maricafe_back.repository.ImageRepository;
 import com.uade.tpo.maricafe_back.entity.Product;
@@ -28,6 +29,23 @@ public class ImageServiceImpl implements ImageService {
         return productRepository.findImagesByProductId(productId).stream()
                 .sorted((img1, img2) -> Integer.compare(img1.getImageOrder(), img2.getImageOrder()))
                 .map(img -> Base64.getEncoder().encodeToString(img.getData()))
+                .toList();
+    }
+
+    @Override
+    public List<ImageResponse> findImagesWithIdsByProductId(Integer productId) {
+        // Validar que el producto exista (sin restricción de stock para permitir admin ver productos sin stock)
+        productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "El producto con id: " + productId + " no fue encontrado"));
+
+        // Trae List<Image> desde el repo ordenadas por imageOrder y lo convierte a ImageResponse con ID y base64
+        return productRepository.findImagesByProductId(productId).stream()
+                .sorted((img1, img2) -> Integer.compare(img1.getImageOrder(), img2.getImageOrder()))
+                .map(img -> ImageResponse.builder()
+                        .id(img.getId())
+                        .file(Base64.getEncoder().encodeToString(img.getData()))
+                        .build())
                 .toList();
     }
 
