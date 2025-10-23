@@ -64,6 +64,9 @@ public class OrderServiceImpl implements IOrderService {
                 .totalPrice(order.getTotalPrice())
                 .active(order.isActive())
                 .items(itemDTOs)
+                .userId(order.getUser() != null ? order.getUser().getUserId() : null)
+                .userName(order.getUser() != null ? order.getUser().getFirstName() + " " + order.getUser().getLastName() : null)
+                .userEmail(order.getUser() != null ? order.getUser().getEmail() : null)
                 .build();
     }
 

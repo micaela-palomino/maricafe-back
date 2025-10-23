@@ -26,4 +26,14 @@ public class OrderDTO {
 
     @JsonProperty("items")
     private List<ItemDTO> items;
+
+    // User information
+    @JsonProperty("user_id")
+    private Integer userId;
+
+    @JsonProperty("user_name")
+    private String userName;
+
+    @JsonProperty("user_email")
+    private String userEmail;
 }
