@@ -3,9 +3,9 @@
 
 -- Insert categories (ignore duplicates)
 INSERT IGNORE INTO categories (name) VALUES 
-('tortas'),
-('tazas'),
-('catering');
+('Tortas'),
+('Tazas'),
+('Catering');
 
 -- Insert products (ignore duplicates)
 INSERT IGNORE INTO products (title, description, price, category_id, stock) VALUES 
