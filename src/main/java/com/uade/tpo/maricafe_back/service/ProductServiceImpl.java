@@ -14,6 +14,7 @@ import com.uade.tpo.maricafe_back.repository.ProductRepository;
 import com.uade.tpo.maricafe_back.repository.DiscountRepository;
 import com.uade.tpo.maricafe_back.repository.ProductAttributeValueRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -326,6 +327,10 @@ public class ProductServiceImpl implements IProductService {
         if (!productRepository.existsById(productId)) {
             throw new ResourceNotFoundException("El producto con id: " + productId + " no fue encontrado");
         }
-        productRepository.deleteById(productId);
+        try {
+            productRepository.deleteById(productId);
+        } catch (DataIntegrityViolationException ex) {
+            throw new IllegalStateException("No se puede eliminar el producto porque está asociado a al menos una orden.");
+        }
     }
 }
