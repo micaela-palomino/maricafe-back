@@ -14,6 +14,7 @@ import com.uade.tpo.maricafe_back.repository.ProductRepository;
 import com.uade.tpo.maricafe_back.repository.DiscountRepository;
 import com.uade.tpo.maricafe_back.repository.ProductAttributeValueRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
