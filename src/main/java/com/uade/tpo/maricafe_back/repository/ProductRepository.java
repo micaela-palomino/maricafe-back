@@ -18,6 +18,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("""
            SELECT p FROM Product p
            WHERE p.stock > 0
+             AND p.active = true
              AND (:q IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :q, '%')))
              AND (:priceMin IS NULL OR p.price >= :priceMin)
              AND (:priceMax IS NULL OR p.price <= :priceMax)
@@ -37,8 +38,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                                   @Param("priceMin") Double priceMin,
                                   @Param("priceMax") Double priceMax);
 
-    // 2) Buscar producto por id y stock mayor a 0 (el campo es productId)
-    Optional<Product> findByProductIdAndStockGreaterThan(Integer productId, int stockIsGreaterThan);
+    // 2) Buscar producto por id y stock mayor a 0 y activo (el campo es productId)
+    Optional<Product> findByProductIdAndStockGreaterThanAndActiveTrue(Integer productId, int stockIsGreaterThan);
 
     // 3) **ELIMINADO** el método que hacía SELECT i.url ... (no existe 'url' en Image).
 
@@ -50,6 +51,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("""
            SELECT p FROM Product p
            WHERE p.stock > 0
+             AND p.active = true
              AND (:title IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :title, '%')))
              AND (:description IS NULL OR LOWER(p.description) LIKE LOWER(CONCAT('%', :description, '%')))
              AND (:priceMax IS NULL OR p.price <= :priceMax)
@@ -69,14 +71,14 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                                       @Param("description") String description,
                                       @Param("priceMax") Double priceMax);
 
-    // 5) Por categoryId y con stock, ordenado
-    List<Product> findByCategory_CategoryIdAndStockGreaterThan(Integer categoryId, int stock, Sort sort);
+    // 5) Por categoryId y con stock, ordenado (solo activos)
+    List<Product> findByCategory_CategoryIdAndStockGreaterThanAndActiveTrue(Integer categoryId, int stock, Sort sort);
 
     // 5-b) Por categoryId (TODOS los productos, para ADMIN)
     List<Product> findByCategory_CategoryId(Integer categoryId, Sort sort);
 
-    // 6) Stock > X con orden
-    List<Product> findByStockGreaterThan(int stock, Sort sort);
+    // 6) Stock > X con orden (solo activos)
+    List<Product> findByStockGreaterThanAndActiveTrue(int stock, Sort sort);
 
     // 7) **Corregido**: si querías chequear existencia, debe ser 'existsBy...'
     boolean existsByProductId(Integer productId);

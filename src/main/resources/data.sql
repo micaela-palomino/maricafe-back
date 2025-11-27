@@ -8,45 +8,45 @@ INSERT IGNORE INTO categories (name) VALUES
 ('Catering');
 
 -- Insert products (ignore duplicates)
-INSERT IGNORE INTO products (title, description, price, category_id, stock) VALUES 
+INSERT IGNORE INTO products (title, description, price, category_id, stock, active) VALUES
 -- Tortas
-('Rainbow Cake Clásica', 'Torta de capas del arcoíris con crema de vainilla. Perfecta para celebraciones especiales.', 65000, 1, 10),
-('Rainbow Cake Vegana', 'Versión 100% vegana de nuestra famosa torta arcoíris. Mismos colores vibrantes, sabor increíble sin ingredientes de origen animal.', 75000, 1, 8),
-('Rainbow Cake Sin TACC', 'Torta arcoíris libre de gluten, perfecta para celíacos. Elaborada con harinas alternativas sin comprometer el sabor.', 80000, 1, 5),
-('Carrot Cake Artesanal', 'Torta de zanahoria húmeda con especias y frosting de queso crema. Un clásico reinventado con nuestro toque especial.', 55000, 1, 7),
-('Torta Red Velvet Pride', 'Red velvet con decoración Pride. Bizcocho rojo aterciopelado con crema cheese y detalles del arcoíris.', 70000, 1, 6),
-('Cheesecake Arcoíris', 'Cheesecake cremoso con capas de colores naturales. Base de galletas y topping de frutas frescas.', 68000, 1, 4),
+('Rainbow Cake Clásica', 'Torta de capas del arcoíris con crema de vainilla. Perfecta para celebraciones especiales.', 65000, 1, 10, TRUE),
+('Rainbow Cake Vegana', 'Versión 100% vegana de nuestra famosa torta arcoíris. Mismos colores vibrantes, sabor increíble sin ingredientes de origen animal.', 75000, 1, 8, TRUE),
+('Rainbow Cake Sin TACC', 'Torta arcoíris libre de gluten, perfecta para celíacos. Elaborada con harinas alternativas sin comprometer el sabor.', 80000, 1, 5, TRUE),
+('Carrot Cake Artesanal', 'Torta de zanahoria húmeda con especias y frosting de queso crema. Un clásico reinventado con nuestro toque especial.', 55000, 1, 7, TRUE),
+('Torta Red Velvet Pride', 'Red velvet con decoración Pride. Bizcocho rojo aterciopelado con crema cheese y detalles del arcoíris.', 70000, 1, 6, TRUE),
+('Cheesecake Arcoíris', 'Cheesecake cremoso con capas de colores naturales. Base de galletas y topping de frutas frescas.', 68000, 1, 4, TRUE),
 
 -- Tazas
-('Taza Pride "Love is Love"', 'Taza cerámica blanca con diseño Pride y el mensaje "Love is Love". Perfecta para tu café matutino con amor.', 12000, 2, 15),
-('Taza Arcoíris Personalizada', 'Taza con diseño arcoíris personalizable. Agrega tu nombre o mensaje especial para hacerla única.', 15000, 2, 12),
-('Set de 4 Tazas Diversidad', 'Set de 4 tazas con diferentes banderas de la diversidad: Pride, Trans, Bisexual y Pansexual.', 45000, 2, 8),
-('Taza "Be Yourself"', 'Taza con mensaje motivacional y diseño inclusivo. Perfecta para recordarte que eres único y especial.', 13000, 2, 10),
-('Taza Trans Pride', 'Taza con los colores de la bandera trans. Diseñada para celebrar la identidad y el orgullo trans.', 14000, 2, 6),
-('Taza Bisexual Pride', 'Taza con los colores de la bandera bisexual. Celebra la diversidad en la orientación sexual.', 14000, 2, 6),
+('Taza Pride "Love is Love"', 'Taza cerámica blanca con diseño Pride y el mensaje "Love is Love". Perfecta para tu café matutino con amor.', 12000, 2, 15, TRUE),
+('Taza Arcoíris Personalizada', 'Taza con diseño arcoíris personalizable. Agrega tu nombre o mensaje especial para hacerla única.', 15000, 2, 12, TRUE),
+('Set de 4 Tazas Diversidad', 'Set de 4 tazas con diferentes banderas de la diversidad: Pride, Trans, Bisexual y Pansexual.', 45000, 2, 8, TRUE),
+('Taza "Be Yourself"', 'Taza con mensaje motivacional y diseño inclusivo. Perfecta para recordarte que eres único y especial.', 13000, 2, 10, TRUE),
+('Taza Trans Pride', 'Taza con los colores de la bandera trans. Diseñada para celebrar la identidad y el orgullo trans.', 14000, 2, 6, TRUE),
+('Taza Bisexual Pride', 'Taza con los colores de la bandera bisexual. Celebra la diversidad en la orientación sexual.', 14000, 2, 6, TRUE),
 
 -- Catering
-('Catering Arcoíris - 20 personas', 'Servicio completo de catering con temática arcoíris. Incluye tortas, bebidas y decoración temática.', 180000, 3, 3),
-('Catering Vegano - 15 personas', 'Catering 100% vegano con opciones variadas. Perfecto para eventos inclusivos y conscientes.', 220000, 3, 2),
-('Catering Sin TACC - 12 personas', 'Catering completamente libre de gluten. Ideal para eventos donde hay personas celíacas.', 200000, 3, 2),
-('Catering Pride - 25 personas', 'Catering temático Pride con decoración y comida colorida. Celebra la diversidad en tu evento.', 250000, 3, 1),
-('Catering Personalizado', 'Catering adaptado a tus necesidades específicas. Consulta por opciones veganas, sin TACC y más.', 150000, 3, 5),
+('Catering Arcoíris - 20 personas', 'Servicio completo de catering con temática arcoíris. Incluye tortas, bebidas y decoración temática.', 180000, 3, 3, TRUE),
+('Catering Vegano - 15 personas', 'Catering 100% vegano con opciones variadas. Perfecto para eventos inclusivos y conscientes.', 220000, 3, 2, TRUE),
+('Catering Sin TACC - 12 personas', 'Catering completamente libre de gluten. Ideal para eventos donde hay personas celíacas.', 200000, 3, 2, TRUE),
+('Catering Pride - 25 personas', 'Catering temático Pride con decoración y comida colorida. Celebra la diversidad en tu evento.', 250000, 3, 1, TRUE),
+('Catering Personalizado', 'Catering adaptado a tus necesidades específicas. Consulta por opciones veganas, sin TACC y más.', 150000, 3, 5, TRUE),
 
 -- Products with zero stock for testing admin vs user visibility
 -- Tortas with zero stock
-('Torta Chocolate Premium', 'Torta de chocolate belga con ganache y decoración artesanal. Edición limitada agotada.', 85000, 1, 0),
-('Torta Tiramisu Italiana', 'Auténtica tiramisu italiana con mascarpone y café. Temporada agotada.', 72000, 1, 0),
-('Torta Lemon Meringue', 'Torta de limón con merengue italiano. Sabor cítrico y refrescante.', 58000, 1, 0),
+('Torta Chocolate Premium', 'Torta de chocolate belga con ganache y decoración artesanal. Edición limitada agotada.', 85000, 1, 0, TRUE),
+('Torta Tiramisu Italiana', 'Auténtica tiramisu italiana con mascarpone y café. Temporada agotada.', 72000, 1, 0, TRUE),
+('Torta Lemon Meringue', 'Torta de limón con merengue italiano. Sabor cítrico y refrescante.', 58000, 1, 0, TRUE),
 
 -- Tazas with zero stock
-('Taza Edición Limitada Pride 2024', 'Taza conmemorativa Pride 2024 con diseño exclusivo. Edición agotada.', 18000, 2, 0),
-('Taza Termo Arcoíris', 'Termo de acero inoxidable con diseño arcoíris. Perfecto para mantener la temperatura.', 25000, 2, 0),
-('Set VIP Pride Collection', 'Set premium de 6 tazas con diseños exclusivos de la colección Pride. Agotado.', 75000, 2, 0),
+('Taza Edición Limitada Pride 2024', 'Taza conmemorativa Pride 2024 con diseño exclusivo. Edición agotada.', 18000, 2, 0, TRUE),
+('Taza Termo Arcoíris', 'Termo de acero inoxidable con diseño arcoíris. Perfecto para mantener la temperatura.', 25000, 2, 0, TRUE),
+('Set VIP Pride Collection', 'Set premium de 6 tazas con diseños exclusivos de la colección Pride. Agotado.', 75000, 2, 0, TRUE),
 
 -- Catering with zero stock
-('Catering Premium Pride - 50 personas', 'Catering de lujo para eventos Pride grandes. Incluye decoración completa y servicio premium.', 450000, 3, 0),
-('Catering Corporativo Inclusivo', 'Catering especializado para empresas con políticas de diversidad e inclusión.', 320000, 3, 0),
-('Catering Wedding Pride', 'Catering especializado para bodas con temática Pride. Servicio completo de lujo.', 380000, 3, 0);
+('Catering Premium Pride - 50 personas', 'Catering de lujo para eventos Pride grandes. Incluye decoración completa y servicio premium.', 450000, 3, 0, TRUE),
+('Catering Corporativo Inclusivo', 'Catering especializado para empresas con políticas de diversidad e inclusión.', 320000, 3, 0, TRUE),
+('Catering Wedding Pride', 'Catering especializado para bodas con temática Pride. Servicio completo de lujo.', 380000, 3, 0, TRUE);
 
 -- Insert product attributes (ignore duplicates)
 INSERT IGNORE INTO product_attributes (name, data_type, description, required, select_options, category_id) VALUES 

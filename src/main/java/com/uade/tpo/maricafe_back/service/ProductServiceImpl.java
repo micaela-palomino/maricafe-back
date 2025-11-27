@@ -126,14 +126,14 @@ public class ProductServiceImpl implements IProductService {
     @Override
     public ProductDTO findById(Integer id, boolean isAdmin) {
         if (isAdmin) {
-            // Admin can see any product
+            // Admin can see any product (activo o inactivo)
             Product product = productRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("No se encuentra producto con id: " + id));
             return toDTO(product);
         } else {
-            // User can only see products with stock
-            Product product = productRepository.findByProductIdAndStockGreaterThan(id, 0)
-                    .orElseThrow(() -> new IllegalArgumentException("El producto con id: " + id + " no fue encontrado o no tiene stock"));
+            // User can only see products with stock y activos
+            Product product = productRepository.findByProductIdAndStockGreaterThanAndActiveTrue(id, 0)
+                    .orElseThrow(() -> new IllegalArgumentException("El producto con id: " + id + " no fue encontrado, no tiene stock o está inactivo"));
             return toDTO(product);
         }
     }
@@ -157,14 +157,13 @@ public class ProductServiceImpl implements IProductService {
     @Override
     public List<ProductDTO> listProductsSortedByPrice(String sortParam, boolean isAdmin) {
         Sort sort = parseSortByPrice(sortParam);
-        
         List<Product> products;
         if (isAdmin) {
-            // Admin sees all products
+            // Admin sees all products (activos e inactivos)
             products = productRepository.findAll(sort);
         } else {
-            // User sees only products with stock
-            products = productRepository.findByStockGreaterThan(0, sort);
+            // User sees only products with stock y activos
+            products = productRepository.findByStockGreaterThanAndActiveTrue(0, sort);
         }
         
         return products.stream().map(this::toDTO).toList();
@@ -173,8 +172,8 @@ public class ProductServiceImpl implements IProductService {
     @Override
     public List<ProductDTO> getProductsWithAttributes(String sortParam) {
         Sort sort = parseSortByPrice(sortParam);
-        // Get products with stock and include their attributes
-        return productRepository.findByStockGreaterThan(0, sort)
+        // Get products with stock y activos and include their attributes
+        return productRepository.findByStockGreaterThanAndActiveTrue(0, sort)
                 .stream().map(this::toDTO).toList();
     }
 
@@ -182,8 +181,8 @@ public class ProductServiceImpl implements IProductService {
     public List<ProductDTO> getProductsFilteredByAttributes(String sortParam, Integer categoryId, String attributeFilters) {
         Sort sort = parseSortByPrice(sortParam);
         
-        // Get all products with stock
-        List<Product> allProducts = productRepository.findByStockGreaterThan(0, sort);
+        // Get all products with stock y activos
+        List<Product> allProducts = productRepository.findByStockGreaterThanAndActiveTrue(0, sort);
         
         // Filter by category if specified
         if (categoryId != null) {
@@ -236,11 +235,11 @@ public class ProductServiceImpl implements IProductService {
         
         List<Product> products;
         if (isAdmin) {
-            // Admin sees all products in category
+            // Admin sees all products in category (activos e inactivos)
             products = productRepository.findByCategory_CategoryId(categoryId, sort);
         } else {
-            // User sees only products with stock in category
-            products = productRepository.findByCategory_CategoryIdAndStockGreaterThan(categoryId, 0, sort);
+            // User sees only products with stock y activos in category
+            products = productRepository.findByCategory_CategoryIdAndStockGreaterThanAndActiveTrue(categoryId, 0, sort);
         }
         
         return products.stream().map(this::toDTO).toList();
@@ -271,6 +270,7 @@ public class ProductServiceImpl implements IProductService {
                 .price(dto.getPrice())
                 .category(category)
                 .stock(dto.getStock())
+                .active(true)
                 .build();
 
         product = productRepository.save(product);
@@ -320,12 +320,12 @@ public class ProductServiceImpl implements IProductService {
         return toDTO(product);
     }
 
-    // 4.3 eliminar producto (solo ADMIN)
+    // 4.3 eliminar producto (solo ADMIN) -> baja lógica (soft delete)
     @Override
     public void deleteProduct(Integer productId) {
-        if (!productRepository.existsById(productId)) {
-            throw new ResourceNotFoundException("El producto con id: " + productId + " no fue encontrado");
-        }
-        productRepository.deleteById(productId);
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("El producto con id: " + productId + " no fue encontrado"));
+        product.setActive(false);
+        productRepository.save(product);
     }
 }

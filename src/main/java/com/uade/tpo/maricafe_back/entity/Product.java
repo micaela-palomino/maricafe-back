@@ -28,6 +28,9 @@ public class Product {
 
     private int stock;
 
+    @Column(nullable = false)
+    private Boolean active = true;
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images = new ArrayList<>();
 
