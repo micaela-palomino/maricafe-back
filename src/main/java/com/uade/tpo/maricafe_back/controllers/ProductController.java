@@ -102,6 +102,13 @@ public class ProductController {
         return ResponseEntity.ok(ApiResponseDTO.success("Producto eliminado con éxito"));
     }
 
+    // 4.x PATCH /products/{id}/activate - Reactivar producto (solo ADMIN)
+    @PatchMapping("/{id}/activate")
+    public ResponseEntity<ApiResponseDTO<ProductDTO>> activateProduct(@PathVariable Integer id) {
+        ProductDTO activated = productService.activateProduct(id);
+        return ResponseEntity.ok(ApiResponseDTO.success("Producto activado con éxito", activated));
+    }
+
     // Attribute Management Endpoints
 
     // Get attributes for a category

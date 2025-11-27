@@ -37,5 +37,8 @@ public interface IProductService {
 
     // 4.3 eliminar producto
     void deleteProduct(Integer productId);
+
+    // 4.x reactivar producto (baja lógica inversa)
+    ProductDTO activateProduct(Integer productId);
 }
 

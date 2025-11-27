@@ -329,4 +329,14 @@ public class ProductServiceImpl implements IProductService {
         product.setActive(false);
         productRepository.save(product);
     }
+
+    // 4.x reactivar producto (solo ADMIN) -> revertir baja lógica
+    @Override
+    public ProductDTO activateProduct(Integer productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("El producto con id: " + productId + " no fue encontrado"));
+        product.setActive(true);
+        product = productRepository.save(product);
+        return toDTO(product);
+    }
 }
