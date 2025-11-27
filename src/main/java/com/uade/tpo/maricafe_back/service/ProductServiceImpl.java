@@ -166,8 +166,35 @@ public class ProductServiceImpl implements IProductService {
             // User sees only products with stock y activos
             products = productRepository.findByStockGreaterThanAndActiveTrue(0, sort);
         }
-        
-        return products.stream().map(this::toDTO).toList();
+
+        // Primero mapeamos a DTO para que cada producto tenga su descuento aplicado (newPrice)
+        List<ProductDTO> dtos = products.stream()
+                .map(this::toDTO)
+                .toList();
+
+        // Si no se especifica sort, respetamos el orden proveniente del repositorio
+        if (sortParam == null || sortParam.isBlank()) {
+            return dtos;
+        }
+
+        // Determinar dirección a partir de sortParam (price,asc|desc)
+        String[] parts = sortParam.split(",");
+        boolean desc = parts.length == 2 && "desc".equalsIgnoreCase(parts[1]);
+
+        // Ordenar por precio efectivo: si hay descuento usamos newPrice, si no price
+        java.util.Comparator<ProductDTO> comparator = java.util.Comparator.comparingDouble(dto -> {
+            double originalPrice = dto.getPrice();
+            Double discounted = dto.getNewPrice();
+            return discounted != null ? discounted : originalPrice;
+        });
+
+        if (desc) {
+            comparator = comparator.reversed();
+        }
+
+        return dtos.stream()
+                .sorted(comparator)
+                .toList();
     }
 
     @Override
