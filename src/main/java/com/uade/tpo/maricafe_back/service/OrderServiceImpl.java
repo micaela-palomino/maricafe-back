@@ -181,7 +181,17 @@ public class OrderServiceImpl implements IOrderService {
     public void deactivateOrder(Integer id) {
         Order order = orderRepository.findByOrderIdAndActiveTrue(id)
                 .orElseThrow(() -> new ResourceNotFoundException("La orden con id: " + id + " no existe o ya está inactiva"));
-        
+
+        // Restaurar stock de cada producto asociado a la orden
+        List<OrderItem> orderItems = orderItemRepository.findByOrderOrderId(order.getOrderId());
+        for (OrderItem orderItem : orderItems) {
+            Product product = orderItem.getProduct();
+            if (product != null) {
+                product.setStock(product.getStock() + orderItem.getQuantity());
+                productRepository.save(product);
+            }
+        }
+
         // Marcar como inactiva (soft delete)
         order.setActive(false);
         orderRepository.save(order);
