@@ -2,10 +2,10 @@
 -- This file will be executed when the application starts
 
 -- Insert categories (ignore duplicates)
-INSERT IGNORE INTO categories (name) VALUES 
-('Tortas'),
-('Tazas'),
-('Catering');
+INSERT IGNORE INTO categories (name, active) VALUES 
+('Tortas', TRUE),
+('Tazas', TRUE),
+('Catering', TRUE);
 
 -- Insert products (ignore duplicates)
 INSERT IGNORE INTO products (title, description, price, category_id, stock, active) VALUES

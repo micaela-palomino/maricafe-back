@@ -17,4 +17,6 @@ public interface ICategoryService {
     void deleteCategoryById(Integer id);
 
     CategoryDTO updateCategory(Integer id, CreateCategoryDTO dto);
+
+    CategoryDTO activateCategory(Integer id);
 }

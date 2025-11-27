@@ -57,4 +57,10 @@ public class CategoryController {
         return ResponseEntity.ok(ApiResponseDTO.success("Categoría actualizada con éxito", updated));
     }
 
+    @PatchMapping("/{categoryId}/activate")
+    public ResponseEntity<ApiResponseDTO<CategoryDTO>> activateCategory(@PathVariable Integer categoryId) {
+        CategoryDTO activated = categoriaService.activateCategory(categoryId);
+        return ResponseEntity.ok(ApiResponseDTO.success("Categoría activada con éxito", activated));
+    }
+
 }

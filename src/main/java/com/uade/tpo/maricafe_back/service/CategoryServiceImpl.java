@@ -59,14 +59,16 @@ public class CategoryServiceImpl implements ICategoryService {
     @Override
     @Transactional
     public void deleteCategoryById(Integer id) {
-        if (!categoryRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Categoría con id: " + id + " no encontrada");
-        }
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Categora con id: " + id + " no encontrada"));
+
         boolean hasProducts = productRepository.existsByCategory_CategoryId(id);
         if (hasProducts) {
             throw new IllegalStateException("No se puede eliminar una categoria con Producto");
         }
-        categoryRepository.deleteById(id);
+
+        category.setActive(false);
+        categoryRepository.save(category);
     }
 
     @Override
@@ -88,5 +90,17 @@ public class CategoryServiceImpl implements ICategoryService {
         Category updated = categoryRepository.save(category);
 
         return modelMapper.map(updated, CategoryDTO.class);
+    }
+
+    @Override
+    @Transactional
+    public CategoryDTO activateCategory(Integer id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Categora con id: " + id + " no encontrada"));
+
+        category.setActive(true);
+        Category activated = categoryRepository.save(category);
+
+        return modelMapper.map(activated, CategoryDTO.class);
     }
 }

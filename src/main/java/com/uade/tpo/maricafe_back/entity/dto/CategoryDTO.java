@@ -14,4 +14,7 @@ public class CategoryDTO {
 
     @JsonProperty("name")
     private String name;
+
+    @JsonProperty("active")
+    private Boolean active;
 }
