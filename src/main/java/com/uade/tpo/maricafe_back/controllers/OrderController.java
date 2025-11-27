@@ -53,6 +53,13 @@ public class OrderController {
         return ApiResponseDTO.success("Orden desactivada con éxito");
     }
 
+    @PutMapping("/{id}/finalize")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponseDTO<OrderDTO> finalizeOrder(@PathVariable Integer id) {
+        OrderDTO updated = ordenService.finalizeOrder(id);
+        return ApiResponseDTO.success("Orden finalizada con éxito", updated);
+    }
+
     // Endpoints para administradores
     @GetMapping("/admin/active")
     @ResponseStatus(HttpStatus.OK)

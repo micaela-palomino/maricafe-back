@@ -24,6 +24,9 @@ public class OrderDTO {
     @JsonProperty("active")
     private boolean active;
 
+    @JsonProperty("status")
+    private String status;
+
     @JsonProperty("items")
     private List<ItemDTO> items;
 

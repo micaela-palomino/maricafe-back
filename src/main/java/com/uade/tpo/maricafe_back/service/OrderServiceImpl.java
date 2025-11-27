@@ -63,6 +63,7 @@ public class OrderServiceImpl implements IOrderService {
                 .orderDate(order.getOrderDate())
                 .totalPrice(order.getTotalPrice())
                 .active(order.isActive())
+                .status(order.getStatus())
                 .items(itemDTOs)
                 .userId(order.getUser() != null ? order.getUser().getUserId() : null)
                 .userName(order.getUser() != null ? order.getUser().getFirstName() + " " + order.getUser().getLastName() : null)
@@ -84,6 +85,7 @@ public class OrderServiceImpl implements IOrderService {
         Order order = Order.builder()
                 .orderDate(LocalDateTime.now())
                 .totalPrice(0.0) // Se calculara después
+                .status("PENDING")
                 .user(authenticatedUser)
                 .build();
 
@@ -140,6 +142,7 @@ public class OrderServiceImpl implements IOrderService {
                 .orderDate(created.getOrderDate())
                 .totalPrice(created.getTotalPrice())
                 .active(created.isActive())
+                .status(created.getStatus())
                 .items(itemDTOs)
                 .build();
     }
@@ -192,9 +195,25 @@ public class OrderServiceImpl implements IOrderService {
             }
         }
 
-        // Marcar como inactiva (soft delete)
+        // Marcar como inactiva (soft delete) y actualizar estado
         order.setActive(false);
+        order.setStatus("CANCELLED");
         orderRepository.save(order);
+    }
+
+    @Override
+    public OrderDTO finalizeOrder(Integer id) {
+        Order order = orderRepository.findByOrderIdAndActiveTrue(id)
+                .orElseThrow(() -> new ResourceNotFoundException("La orden con id: " + id + " no existe o ya está inactiva"));
+
+        // Solo se pueden finalizar órdenes pendientes
+        if (!"PENDING".equalsIgnoreCase(order.getStatus())) {
+            throw new IllegalStateException("Solo se pueden finalizar órdenes en estado PENDING");
+        }
+
+        order.setStatus("FINALIZED");
+        Order saved = orderRepository.save(order);
+        return convertOrderToDTO(saved);
     }
 
     @Override

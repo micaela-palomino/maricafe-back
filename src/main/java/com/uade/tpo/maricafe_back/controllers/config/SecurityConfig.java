@@ -58,6 +58,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/orders/admin/active").hasAuthority(Role.ADMIN.name())
                         .requestMatchers(HttpMethod.GET, "/orders/admin/inactive").hasAuthority(Role.ADMIN.name())
                         .requestMatchers(HttpMethod.DELETE, "/orders/{id}").hasAuthority(Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.PUT, "/orders/**").hasAuthority(Role.ADMIN.name())
 
                         // Usuarios
                         .requestMatchers(HttpMethod.PUT, "/users/{userId}").hasAnyAuthority(Role.USER.name(), Role.ADMIN.name())

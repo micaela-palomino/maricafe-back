@@ -11,6 +11,7 @@ public interface IOrderService {
     OrderDTO findById(Integer id);
     OrderDTO findMyOrderById(Integer id);
     void deactivateOrder(Integer id);
+    OrderDTO finalizeOrder(Integer id);
     
     // Métodos para administradores
     List<OrderDTO> findAllActiveOrders();

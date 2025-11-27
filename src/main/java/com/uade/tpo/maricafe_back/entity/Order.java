@@ -20,7 +20,11 @@ public class Order {
 
     private LocalDateTime orderDate;
     private double totalPrice;
-    
+
+    @Column(name = "status", nullable = false)
+    @Builder.Default
+    private String status = "PENDING"; // Estado de la orden (PENDING, FINALIZED, CANCELLED)
+
     @Column(name = "active", nullable = false)
     @Builder.Default
     private boolean active = true; // Por defecto las órdenes están activas
